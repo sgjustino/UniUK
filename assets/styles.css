@@ -1,0 +1,203 @@
+/* Main Page Title
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.main-title {
+    text-align: left; 
+    color: white;
+    font-weight: bold;
+    background-color: black; 
+    padding: 1px 5px; 
+    margin-top: -25px;
+    margin-bottom: 0px;
+    font-size: 24px;
+    font-family: 'Lato', sans-serif;
+}
+
+/* Global Styles
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+body {
+    background-color: black;
+    color: white;
+    font-family: 'Lato', sans-serif; 
+}
+
+/* Page Title */
+.title {
+    text-align: left;
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+    font-family: 'Lato', sans-serif; 
+}
+
+/* Tabs
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+#tabs {
+    width: 100%;
+}
+
+.custom-tabs {
+    background-color: #1E2130;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 14px;
+    height: fit-content;
+    cursor: pointer;
+    font-family: 'Lato', sans-serif; 
+}
+
+#Topic-Frequency-tab.custom-tab,
+#Sentiment-Analysis-tab.custom-tab,
+#Topic-Data-tab.custom-tab {
+    background-color: #36454F;
+    letter-spacing: 1px;
+    color: white;
+    font-family: 'Lato', sans-serif; 
+    border: 0;
+    border-bottom: #1E2130 solid 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    height: 18px;
+}
+
+#Topic-Frequency-tab.custom-tab--selected,
+#Sentiment-Analysis-tab.custom-tab--selected,
+#Topic-Data-tab.custom-tab--selected {
+    border-bottom: #91dfd2 solid 4px !important;
+}
+
+#Topic-Frequency-tab.custom-tab {
+    margin-right: 3px;
+}
+
+#Sentiment-Analysis-tab.custom-tab,
+#Topic-Data-tab.custom-tab {
+    margin-left: 3px;
+}
+
+/* Dropdowns
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.Select-control {
+    background-color: #white;
+    color: black;
+    font-size: 18px;
+    font-weight: 600;
+    border: none;
+    font-family: 'Lato', sans-serif; 
+}
+
+.Select-menu-outer {
+    background-color: #white;
+    color: black;
+    border: none;
+}
+
+.Select-option {
+    background-color: #white;
+    color: black;
+}
+
+.Select-option:hover {
+    background-color: #white;
+    color: white;
+}
+
+/* Range Slider
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.rc-slider-track {
+    background-color: #91dfd2;
+}
+
+.rc-slider-handle {
+    border-color: #91dfd2;
+}
+
+.rc-slider-handle:hover {
+    border-color: #6bc7b6;
+}
+
+.rc-slider-handle-dragging.rc-slider-handle-dragging.rc-slider-handle-dragging {
+    border-color: #6bc7b6;
+    box-shadow: 0 0 0 5px #6bc7b6;
+}
+
+/* Topic Frequency Analysis
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+#topic-frequency-graph {
+    background-color: black;
+}
+
+/* Sentiment Shift Analysis
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+#sentiment-analysis-graph {
+    background-color: black;
+}
+
+/* Topic Data
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+#topic-data-table .dash-table-container {
+    font-size: 16px;
+    font-family: 'Lato', sans-serif; 
+}
+
+#topic-data-table .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table {
+    --accent: #91dfd2;
+    --hover: #6bc7b6;
+    --text-color: white;
+    --background-color: black;
+    --alt-background-color: #161a28;
+    table-layout: fixed;
+    width: 100%;
+}
+
+#topic-data-table .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table thead th {
+    background-color: #161a28; 
+    color: white; 
+    font-weight: bold; 
+    font-size: 16px; 
+    font-family: 'Lato', sans-serif;
+}
+
+#topic-data-table .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table tbody td {
+    background-color: #353839; 
+    color: white; 
+    border: 1px solid #588A87; 
+    text-align: left; 
+    padding: 5px; 
+    font-size: 14px; 
+    font-family: 'Lato', sans-serif;
+}
+
+#topic-data-table .dash-table-container .dash-spreadsheet-container {
+    overflow-x: auto;
+}
+
+/* Absolute Frequency/Normalized Frequency Tabs
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.frequency-tabs {
+    margin-bottom: 0;
+}
+
+#frequency-tabs .tab,
+#sentiment-frequency-tabs .tab {
+    background-color: #36454F;
+    letter-spacing: 1px;
+    color: white;
+    font-weight: 600;
+    border: 0;
+    border-bottom: #1E2130 solid 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    height: 18px;
+    margin-right: 3px;
+}
+
+#frequency-tabs .tab--selected,
+#sentiment-frequency-tabs .tab--selected {
+    border-bottom: #91dfd2 solid 4px !important;
+}
