@@ -45,12 +45,12 @@ The `app.py` script contains the following main components:
    python app.py
    ```
 
-3a. Access the dashboard through localhost:
+3. Access the dashboard through localhost:
    ```
    http://127.0.0.1:8050/
    ```
 
-3b. Access the dashboard through the provided URL in your web browser:
+4. Access the dashboard through the provided URL in your web browser:
    ```
    http://127.0.0.1:8050/
    ```
@@ -59,7 +59,7 @@ The `app.py` script contains the following main components:
 
 The original data source can be found at [https://academictorrents.com/details/9c263fc85366c1ef8f5bb9da0203f4c8c8db75f4](https://academictorrents.com/details/9c263fc85366c1ef8f5bb9da0203f4c8c8db75f4).
 
-## Libraries/Tools Used
+## Built With
 
 - NLTK: [https://github.com/nltk/nltk](https://github.com/nltk/nltk)
 - BERTopic: [https://github.com/MaartenGr/BERTopic](https://github.com/MaartenGr/BERTopic)
@@ -73,5 +73,9 @@ The original data source can be found at [https://academictorrents.com/details/9
 - Hutto, C.J. & Gilbert, E.E. (2014). VADER: A Parsimonious Rule-based Model for Sentiment Analysis of Social Media Text. Eighth International Conference on Weblogs and Social Media (ICWSM-14). Ann Arbor, MI, June 2014.
 - Solatorio, A. V. (2024). GISTEmbed: Guided In-sample Selection of Training Negatives for Text Embedding Fine-tuning. arXiv preprint arXiv:2402.16829. [https://arxiv.org/abs/2402.16829](https://arxiv.org/abs/2402.16829)
 - Grootendorst, M. (2022). BERTopic: Neural topic modeling with a class-based TF-IDF procedure. arXiv preprint arXiv:2203.05794.
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
 
 ### End
