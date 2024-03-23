@@ -403,7 +403,7 @@ def update_sentiment_analysis_graph(selected_topic_label, frequency_type):
     fig_abs = go.Figure()
     
     # Add traces for each sentiment for the selected topic
-    for sentiment in ['negative', 'neutral', 'positive']:
+    for sentiment in ['positive', 'neutral', 'negative']:
         fig_abs.add_trace(
             go.Scatter(
                 x=filtered_sentiment_counts['created_utc'],
@@ -434,7 +434,7 @@ def update_sentiment_analysis_graph(selected_topic_label, frequency_type):
     fig_norm = go.Figure()
     
     # Add traces for each sentiment for the selected topic
-    for sentiment in ['negative', 'neutral', 'positive']:
+    for sentiment in ['positive', 'neutral', 'negative']:
         normalized_column_name = f'{sentiment}_normalized'
         fig_norm.add_trace(
             go.Scatter(
