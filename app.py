@@ -1,5 +1,4 @@
 # Dependencies
-import numpy as np 
 import pandas as pd 
 import os
 import plotly.graph_objs as go
