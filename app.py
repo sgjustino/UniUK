@@ -70,9 +70,9 @@ app.layout = html.Div([
         # Main Title
         className='main-title',
         children=[
-            html.H2('Subreddit UniUK Sentiment Analysis Dashboard'),
+            html.H2('R/UniUK Sentiment Dashboard'),
             html.P(
-                'Scraped posts from subreddit r/UniUK from 2016 to 2023, using topic modeling and sentiment polarity analysis to draw insights for the dashboard.',
+                'Examining key themes and sentiment trends from r/UniUK posts (2016-2023) to understand the changing perspectives and emotional dynamics of UK university students.',
                 style={'fontSize': '14px','marginTop': '-20px','color': '#aaaaaa', }
             ),
         # Learn More Button
@@ -140,10 +140,15 @@ app.layout = html.Div([
 index_page = html.Div([
     # Page Title
     html.H1("Tracking Topic Frequencies over Time", className="title"),
-    html.P("(1) Select Range of Topics     (2) Select Type of Frequency", style={
+    html.P([
+    "(1) Select Range of Topics.", 
+    html.Br(),
+    "(2) Select Type of Frequency: Absolute or Normalized (% frequency across selected topics)."
+    ], style={
         'color': '#aaaaaa',  
         'fontWeight': 'bold',  
-        'fontSize': '14px'
+        'fontSize': '14px',
+        'marginTop': '-10px' 
     }),
     # Page Topic Slider
     dcc.RangeSlider(
@@ -187,10 +192,15 @@ dropdown_options = [{'label': row['Topic_Label'], 'value': row['Topic_Label']} f
 sentiment_analysis_page = html.Div([
     # Page Title
     html.H1(id='sentiment-analysis-title', className="title"),
-    html.P("(1) Select Topic of Interest     (2) Select Type of Frequency", style={
+    html.P([
+    "(1) Select Topic of Interest.", 
+    html.Br(),
+    "(2) Select Type of Frequency: Absolute or Normalized (% frequency across selected topics)."
+    ], style={
         'color': '#aaaaaa',  
         'fontWeight': 'bold',  
-        'fontSize': '14px'
+        'fontSize': '14px',
+        'marginTop': '-10px'
     }),
     # Page Topic Dropdown List
     dcc.Dropdown(
@@ -217,10 +227,15 @@ sentiment_analysis_page = html.Div([
 topic_data_page = html.Div([
     # Page Title
     html.H1(id='topic-data-title', className="title"),
-    html.P("(1) Select Topic of Interest     (2) Select Range of Years", style={
+    html.P([
+    "(1) Select Topic of Interest.", 
+    html.Br(),
+    "(2) Select Range of Years."
+    ],  style={
         'color': '#aaaaaa',  
         'fontWeight': 'bold',  
-        'fontSize': '14px'
+        'fontSize': '14px',
+        'marginTop': '-10px' 
     }),
     # Page Topic Dropdown List
     dcc.Dropdown(
@@ -530,6 +545,7 @@ def update_topic_data(selected_topic_label, year_range):
             'text-align': 'left',
             'fontFamily': 'Lato, sans-serif'
         },
+        # to hide sentiment tab
         style_data_conditional=styles,
         style_cell_conditional=[
             {'if': {'column_id': 'Date'},
@@ -544,7 +560,8 @@ def update_topic_data(selected_topic_label, year_range):
         ]
     )
 
+    # 1st output for Title, 2nd for table
     return f"Topic Data - {topic_label}", table
 
 if __name__ == '__main__':
-    app.run_server(debug=True) 
+    app.run_server(debug=False) 
