@@ -51,6 +51,7 @@ sentiment_data['Topic_Label'] = sentiment_data['Topic_Label'].apply(
 #################
 
 app = dash.Dash(__name__, external_stylesheets=["assets/styles.css"], suppress_callback_exceptions=True)
+server = app.server
 pd.options.mode.chained_assignment = None
 
 # Set topic range
