@@ -12,11 +12,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the current directory contents into the container at /app
 COPY . /app
 
-# Make port 8080 available to the world outside this container
-EXPOSE 8080
+# Make port 80 available to the world outside this container
+EXPOSE 80
 
 # Define environment variable for the port
-ENV PORT=8080
+ENV PORT=80
 
 # Command to run the app
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8080", "app:server"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:80", "app:server"]
