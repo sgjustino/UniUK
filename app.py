@@ -206,7 +206,7 @@ sentiment_analysis_page = html.Div([
         'color': '#aaaaaa',  
         'fontWeight': 'bold',  
         'fontSize': '14px',
-        'marginTop': '-10px'
+        'marginTop': '-5px'
     }),
     # Page Topic Dropdown List
     dcc.Dropdown(
@@ -244,7 +244,7 @@ topic_data_page = html.Div([
         'color': '#aaaaaa',  
         'fontWeight': 'bold',  
         'fontSize': '14px',
-        'marginTop': '-10px' 
+        'marginTop': '-5px' 
     }),
     # Page Topic Dropdown List
     dcc.Dropdown(
