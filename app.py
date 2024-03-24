@@ -83,9 +83,7 @@ app.layout = html.Div([
             html.Div(
                 children=[
                     html.A(
-                        html.Button("Learn More",
-                                    className="button-primary",
-                                    style={'fontSize': '16px', 'padding': '12px 18px'}),
+                        html.Button("Learn More", className="button-primary"),
                         href="https://github.com/sgjustino/UniUK"
                     )
                 ]

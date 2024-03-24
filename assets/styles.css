@@ -28,6 +28,16 @@
 .main-title .button-primary {
     margin-top: 10px;
     margin-left: 20px;
+    background-color: black; 
+    color: #95969A; 
+    border: 2px solid #95969A;
+    font-size: 24px;
+    padding: 11px 10px; 
+}
+
+.main-title .button-primary:hover {
+    color: #6bc7b6; 
+    border-color: white;
 }
 
 /* Global Styles
