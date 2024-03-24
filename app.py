@@ -564,4 +564,4 @@ def update_topic_data(selected_topic_label, year_range):
     return f"Topic Data - {topic_label}", table
 
 if __name__ == '__main__':
-    app.run_server(debug=False, host='0.0.0.0', port=80)
+    app.run_server(debug=False)
