@@ -151,7 +151,7 @@ index_page = html.Div([
         'color': '#aaaaaa',  
         'fontWeight': 'bold',  
         'fontSize': '14px',
-        'marginTop': '-10px' 
+        'marginTop': '-5px' 
     }),
     # Page Topic Slider
     dcc.RangeSlider(
