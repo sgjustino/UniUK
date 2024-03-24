@@ -274,7 +274,7 @@ body {
     
     /* Adjust legend size */
     #topic-frequency-graph .legend .legenditem {
-        font-size: 8px;
+        font-size: 10px;
     }
 
     #topic-frequency-graph .legend .legenditem .legendtext {

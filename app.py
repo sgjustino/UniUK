@@ -159,7 +159,7 @@ index_page = html.Div([
         min=1,
         max=topic_max,
         value=[1, 10],
-        marks={1: '1'} | {i: str(i) for i in range(10, topic_max, 10)} | {topic_max: str(topic_max)},
+        marks={**{1: '1'}, **{i: str(i) for i in range(10, topic_max, 10)}, **{topic_max: str(topic_max)}},
         step=None
     ),
     # Page Frequency Tabs
@@ -367,7 +367,7 @@ def update_figure(selected_range, frequency_type):
         yaxis_title="<b>Frequency</b>",
         legend_title="<b>Topic Label</b>",
         legend=dict(
-            font=dict(size=10),
+            font=dict(size=12),
             itemsizing='constant',
             itemwidth=30,
             traceorder='normal',
@@ -481,7 +481,7 @@ def update_sentiment_analysis_graph(selected_topic_label, frequency_type):
         xaxis_title='<b>Time</b>',
         yaxis_title='<b>Frequency</b>',
         legend_title='<b>Sentiment</b>',
-        legend=dict(y=0.5),
+        legend=dict(y=0.5,font=dict(size=12)),
         template="plotly_dark",
         margin=dict(t=2, b=5, l=0, r=0)
     )
