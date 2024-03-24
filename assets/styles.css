@@ -262,7 +262,23 @@ body {
     #frequency-tabs .tab,
     #sentiment-frequency-tabs .tab {
         font-size: 12px;
-        height: 16px;
+        height: auto;
+        padding: 5px;
+    }
+
+    /* Adjust page titles and instructions */
+    .title,
+    .title + p {
+        font-size: 16px;
+        margin: 5px 0; 
+        text-align: center; 
+    }
+
+    /* Adjust visibility of elements that may overlap */
+    .title + p,
+    #page-content > .row {
+        display: block; 
+        padding: 0 10px; 
     }
 
     /* Adjust graph and table sizes */
