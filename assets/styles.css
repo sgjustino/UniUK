@@ -230,7 +230,7 @@ body {
 @media (max-width: 600px) {
     /* Adjust main title and Learn More button */
     .main-title {
-        width: 60%;
+        width: 100%;
         font-size: 20px;
     }
     .main-title h2 {
@@ -267,18 +267,25 @@ body {
     }
 
     /* Adjust page titles and instructions */
-    .title,
-    .title + p {
+    .title {
+        margin-bottom: 5px;
         font-size: 16px;
         margin: 5px 0; 
-        text-align: center; 
+        text-align: center;
+    }
+
+    .title + p {
+        font-size: 12px;
+        margin: 5px 0; 
+        text-align: center;
+        margin-top: 10px; 
     }
 
     /* Adjust visibility of elements that may overlap */
     .title + p,
     #page-content > .row {
         display: block; 
-        padding: 0 10px; 
+        padding: 0 15px; 
     }
 
     /* Adjust graph and table sizes */
