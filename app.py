@@ -70,24 +70,27 @@ app.layout = html.Div([
         # Main Title
         className='main-title',
         children=[
-            html.H2('R/UniUK Sentiment Dashboard'),
-            html.P(
-                'Examining key themes and sentiment trends from r/UniUK posts (2016-2023) to understand the changing perspectives and emotional dynamics of UK university students.',
-                style={'fontSize': '14px','marginTop': '-20px','color': '#aaaaaa', }
+            html.Div(
+                children=[
+                    html.H2('R/UniUK Sentiment Dashboard'),
+                    html.P(
+                        'Examining key themes and sentiment trends from r/UniUK posts (2016-2023) to understand the changing perspectives and emotional dynamics of UK university students.',
+                        style={'fontSize': '14px', 'color': '#aaaaaa'}
+                    ),
+                ]
             ),
-        # Learn More Button
-        html.Div(
-            style={'position': 'absolute', 'top': '20px', 'right': '10px'},
-            children=[
-                html.A(
-                    html.Button("Learn More", 
-                                className="button-primary", 
-                                style={'fontSize': '16px', 'padding': '12px 18px'}),
-                    href="https://github.com/sgjustino/UniUK"
-                )
-            ]
-        ),
-    ]),
+            # Learn More button
+            html.Div(
+                children=[
+                    html.A(
+                        html.Button("Learn More",
+                                    className="button-primary",
+                                    style={'fontSize': '16px', 'padding': '12px 18px'}),
+                        href="https://github.com/sgjustino/UniUK"
+                    )
+                ]
+            ),
+        ]),    
     # Tabs Row (Switch between pages)
     html.Div(className='row', children=[
         html.Div(
@@ -154,9 +157,9 @@ index_page = html.Div([
     dcc.RangeSlider(
         id='topic-range-slider',
         min=1,
-        max=topic_max,  
-        value=[0, 10],  
-        marks={str(i): str(i) for i in range(0, topic_max + 1)},  
+        max=topic_max,
+        value=[1, 10],
+        marks={1: '1'} | {i: str(i) for i in range(10, topic_max, 10)} | {topic_max: str(topic_max)},
         step=None
     ),
     # Page Frequency Tabs
@@ -169,7 +172,10 @@ index_page = html.Div([
         ]
     ),
     # Page Visualisation
-    dcc.Graph(id='topic-frequency-graph')
+    html.Div(
+        className='graph-container',
+        children=[dcc.Graph(id='topic-frequency-graph')]
+    )
 ])
 
 '''
@@ -218,7 +224,10 @@ sentiment_analysis_page = html.Div([
         ]
     ),
     # Page Visualisation
-    dcc.Graph(id='sentiment-analysis-graph')
+    html.Div(
+        className='graph-container',
+        children=[dcc.Graph(id='sentiment-analysis-graph')]
+    )
 ])
 
 #################
@@ -264,7 +273,10 @@ topic_data_page = html.Div([
     ], style={'display': 'flex', 'align-items': 'center', 'margin-top': '0px'})
 ]),
     # Topic Table
-    html.Div(id='topic-data-table')
+    html.Div(
+        className='table-container',
+        children=[html.Div(id='topic-data-table')]
+    )
 ])
 
 #################
@@ -354,7 +366,17 @@ def update_figure(selected_range, frequency_type):
         xaxis_title="<b>Time</b>",
         yaxis_title="<b>Frequency</b>",
         legend_title="<b>Topic Label</b>",
-        legend=dict(y=0.5),
+        legend=dict(
+            font=dict(size=10),
+            itemsizing='constant',
+            itemwidth=30,
+            traceorder='normal',
+            orientation='h',
+            yanchor='top',
+            y=-0.2,
+            xanchor='left',
+            x=0
+        ),
         template="plotly_dark",
         margin=dict(t=2, b=5, l=0, r=0),
     )
@@ -533,34 +555,39 @@ def update_topic_data(selected_topic_label, year_range):
 
     # Display content
     desired_columns = ['Date', 'Content', 'sentiment']
-    table = dash_table.DataTable(
-        id='table',
-        columns=[{"name": i, "id": i} for i in desired_columns],
-        data=filtered_data.to_dict('records'),
-        page_size=10,
-        style_header={
-            'backgroundColor': 'black',
-            'color': 'white',
-            'fontWeight': 'bold',
-            'text-align': 'left',
-            'fontFamily': 'Lato, sans-serif'
-        },
-        # to hide sentiment tab
-        style_data_conditional=styles,
-        style_cell_conditional=[
-            {'if': {'column_id': 'Date'},
-             'width': '7%',
-             'fontSize': '16px'},
-            {'if': {'column_id': 'Content'},
-             'whiteSpace': 'normal',
-             'textOverflow': 'ellipsis',
-             'fontSize': '16px'},
-            {'if': {'column_id': 'sentiment'},
-             'width': '0.1%'}
+    table = html.Div(
+        className='table-container',
+        children=[
+            dash_table.DataTable(
+                id='table',
+                columns=[{"name": i, "id": i} for i in desired_columns],
+                data=filtered_data.to_dict('records'),
+                page_size=10,
+                style_header={
+                    'backgroundColor': 'black',
+                    'color': 'white',
+                    'fontWeight': 'bold',
+                    'text-align': 'left',
+                    'fontFamily': 'Lato, sans-serif'
+                },
+
+                # To Hide Sentiment Tab
+                style_data_conditional=styles,
+                style_cell_conditional=[
+                    {'if': {'column_id': 'Date'},
+                     'width': '7%',
+                     'fontSize': '16px'},
+                    {'if': {'column_id': 'Content'},
+                     'whiteSpace': 'normal',
+                     'textOverflow': 'ellipsis',
+                     'fontSize': '16px'},
+                    {'if': {'column_id': 'sentiment'},
+                     'width': '0.1%'}
+                ]
+            )
         ]
     )
 
-    # 1st output for Title, 2nd for table
     return f"Topic Data - {topic_label}", table
 
 if __name__ == '__main__':
