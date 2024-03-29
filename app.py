@@ -7,8 +7,10 @@ from dash import dcc
 from dash import html as html
 from dash.dependencies import Input, Output
 from dash import dash_table
+from interpretation import generate_topic_frequency_gif, generate_sentiment_analysis_gif, generate_topic_data_table
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
+
 
 #################
 # Data Processing
@@ -78,17 +80,8 @@ app.layout = html.Div([
                         style={'fontSize': '14px', 'color': '#aaaaaa'}
                     ),
                 ]
-            ),
-            # Learn More button
-            html.Div(
-                children=[
-                    html.A(
-                        html.Button("Learn More", className="button-primary"),
-                        href="https://github.com/sgjustino/UniUK"
-                    )
-                ]
-            ),
-        ]),    
+            )
+        ]),
     # Tabs Row (Switch between pages)
     html.Div(className='row', children=[
         html.Div(
@@ -99,6 +92,13 @@ app.layout = html.Div([
                     value="tab1",
                     className="custom-tabs",
                     children=[
+                        dcc.Tab(
+                            id="Background-tab",
+                            label="Background",
+                            value="tab0",
+                            className="custom-tab",
+                            selected_className="custom-tab--selected",
+                        ),
                         dcc.Tab(
                             id="Topic-Frequency-tab",
                             label="Topic Analysis",
@@ -120,6 +120,13 @@ app.layout = html.Div([
                             className="custom-tab",
                             selected_className="custom-tab--selected",
                         ),
+                        dcc.Tab(
+                            id="Interpretation-tab",
+                            label="Interpretation",
+                            value="tab4",
+                            className="custom-tab",
+                            selected_className="custom-tab--selected",
+                        ),
                     ],
                 )
             ]
@@ -129,8 +136,78 @@ app.layout = html.Div([
     html.Div(className='row', children=[
         html.Div(
             className='twelve columns',
-            children=[html.Div(id='page-content')]
-        )
+            children=[html.Div(id='page-content')]        )
+    ])
+])
+
+#################
+# Background Page
+#################
+
+background_page = html.Div([
+    html.H2("Research Question: What are university students in the UK thinking and how do their sentiments change over time?", className="title"),    
+    html.H2("Data Source", className="title"),
+    dcc.Markdown('''
+    The data prior to April 2023 was collected by an open-source project called Pushshift and hosted on academictorrents.com.
+    https://academictorrents.com/details/56aa49f9653ba545f48df2e33679f014d2829c10
+    '''),
+
+    html.H2("Data Preprocessing", className="title"),
+    dcc.Markdown('''
+    The data preprocessing steps, including text refinement using the NLTK library, sentiment analysis using VaderSentiment, and topic modeling using BerTopic, are not covered in this repository. 
+    The preprocessing code can be found at https://www.kaggle.com/code/sgjustino/uniuk-topic-modeling-with-bertopic?scriptVersionId=168342984.
+    '''),
+
+    html.H2("Meta-Data for Dashboard", className="title"),
+    html.Div([
+        html.P("Here is a preview of the data with an explanation of each column:"),
+        dash_table.DataTable(
+            data=sentiment_data.head().to_dict('records'),
+            columns=[{"name": i, "id": i} for i in sentiment_data.columns],
+            style_table={'overflowX': 'auto'},
+            style_cell={
+                'backgroundColor': 'black',
+                'color': 'white',
+                'fontWeight': 'bold',
+                'textAlign': 'left',
+                'fontFamily': 'Lato, sans-serif',
+                'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
+                'overflow': 'hidden',
+                'textOverflow': 'ellipsis',
+            }
+        ),
+        html.Ul([
+            html.Li("created_utc: The timestamp of when the post was created."),
+            html.Li("body: The content of the post."),
+            html.Li("sentiment: The sentiment of the post as determined by VaderSentiment (positive, neutral, or negative)."),
+            html.Li("Topic: The topic number that the post belongs to as determined by BerTopic."),
+            html.Li("Topic_Label: The descriptive label for the topic.")
+        ])
+    ]),
+
+    html.H2("Dashboard Explanation", className="title"),
+    dcc.Markdown('''
+    The visualization part of the project showcases the identified themes and their popularity over time, as well as the sentiment (positive, neutral, negative) associated with each theme. It also includes a data table to explore the actual data. The dashboard is built using Dash (Plotly).
+    '''),
+
+    html.H2("Learn More", className="title"),
+    html.P(html.A("Click here", href="https://github.com/sgjustino/UniUK", target="_blank"), " to find out more information about this project."),
+
+    html.H2("Built With", className="title"),
+    html.Ul([
+        html.Li(html.A("NLTK", href="https://github.com/nltk/nltk", target="_blank")),
+        html.Li(html.A("BERTopic", href="https://github.com/MaartenGr/BERTopic", target="_blank")),
+        html.Li(html.A("VaderSentiment", href="https://github.com/cjhutto/vaderSentiment", target="_blank")),
+        html.Li(html.A("Dash (Plotly)", href="https://github.com/plotly/dash", target="_blank")),
+        html.Li(html.A("Dash Opioid Epidemic Demo (inspiration for sliders)", href="https://github.com/plotly/dash-opioid-epidemic-demo", target="_blank")),
+        html.Li(html.A("Dash Manufacture SPC Dashboard (inspiration for tabs)", href="https://github.com/dkrizman/dash-manufacture-spc-dashboard", target="_blank"))
+    ]),
+
+    html.H2("References", className="title"),
+    html.Ul([
+        html.Li("Hutto, C.J. & Gilbert, E.E. (2014). VADER: A Parsimonious Rule-based Model for Sentiment Analysis of Social Media Text. Eighth International Conference on Weblogs and Social Media (ICWSM-14). Ann Arbor, MI, June 2014."),
+        html.Li("Solatorio, A. V. (2024). GISTEmbed: Guided In-sample Selection of Training Negatives for Text Embedding Fine-tuning. arXiv preprint arXiv:2402.16829. https://arxiv.org/abs/2402.16829"),
+        html.Li("Grootendorst, M. (2022). BERTopic: Neural topic modeling with a class-based TF-IDF procedure. arXiv preprint arXiv:2203.05794.")
     ])
 ])
 
@@ -278,6 +355,38 @@ topic_data_page = html.Div([
 ])
 
 #################
+# Interpretation Page
+#################
+
+interpretation_page = html.Div([
+    html.H2("Research Question: What are university students in the UK thinking and how do their sentiments change over time?", className="title"),    
+    html.P("First, we will talk about how the 3 Analysis Tabs (Topic Frequency, Sentiment Analysis, Topic Data) will allow a thorough examination of the Research Question."),
+    
+    html.Div([
+        dcc.Graph(figure=generate_topic_frequency_gif(sentiment_data, topic_max)),
+        html.P("Users can first look at the overall trends of topics that university students in UK are talking about on Reddit. However, as the popularity of the subreddit forum grows, absolute frequency would just show an increasing trend for all topics. Viewing the data by normalized frequency will allow us to see how topics trend relatively to other topics over time, to gauge or gain insights on the 'hottest' topics across time. Notably, the % is based on selected topics, and by selecting all 74 topics (including Topic 74 - Outliers), will allow us to examine the overall proportions of topics across all reddit activities on r/UniUK.")
+    ], className="interpretation-section"),
+    
+    html.Div([
+        dcc.Graph(figure=generate_sentiment_analysis_gif(sentiment_data)),
+        html.P("Users can then zoom in on specific Topic of Interest to understand how sentiments within a topic trend over time. For example, looking at mental health/general health/disability as a topic (Topic 8), we can analyze how positive, neutral and negative posts trend across time. Notably, we can see that such posts are on an increasing uptrend, similar to other topics across the subreddit forum. It is easy to paint a congruent image when we compare with other research that shows that e.g. mental distress has been an increasing uptrend, especially with Covid-19 pandemic (Gagné et al., 2021). However, looking at the normalized frequency, we can see clearly that the proportion of sentiments has been relatively stable across time, with almost twice the number of positive posts to each negative post. Importantly, this does not refute the claims from research. But it does suggest that there is something different for online social media discourse relating to mental health."),
+        html.P("Gagné, T., Schoon, I., McMunn, A., & Sacker, A. (2021). Mental distress among young adults in Great Britain: long-term trends and early changes during the COVID-19 pandemic. Social Psychiatry and Psychiatric Epidemiology, 1-12.", className="reference")
+    ], className="interpretation-section"),
+    
+    html.Div([
+        html.Div([
+            generate_topic_data_table(sentiment_data)
+        ], className="topic-data-table"),
+        html.Div([
+            html.P("Subsequently, such observations can be confirmed or further explored by diving into specific posts from Topic Data tab. The analysis here provide an interesting observation - students are increasingly posting about mental health topics (e.g. highlighting stress in school) and then receiving social support on an online forum (subreddit r/UniUK) and perhaps building a community that help each other, provide assurance and advice in dealing with mental health issues - with twice the number of positive posts to each negative post. While research showed that mental health concerns are on a rise, online social media discourse suggest an interesting channel of social support that are outside of current structured university mental health support system. As youths are increasingly using social media for social connectedness in countering mental health (Winstone et al., 2021), the brief analysis here suggest a growing necessity to encompass or even integrate social media platforms to synergize official university mental health support efforts."),
+            html.P("Winstone, L., Mars, B., Haworth, C. M., & Kidger, J. (2021). Social media use and social connectedness among adolescents in the United Kingdom: a qualitative exploration of displacement and stimulation. BMC public health, 21, 1-15.", className="reference")
+        ], className="topic-data-text")
+    ], className="interpretation-section"),
+    
+    html.P("As stated, this project seeks to understand what university students in UK are thinking and how do their sentiments change over time. Using mental health as a topic, we provided an example of how social media discourse could be harnessed to understand an increasingly growing part of university students' lives - social media consumption. While this dashboard serves as an exploratory visualization to understand the research question, clearly from the mental health example, there is a need for more effort to understand social media discourse to better understand our university students."),
+])
+
+#################
 # Callbacks
 #################
 
@@ -285,10 +394,14 @@ topic_data_page = html.Div([
 @app.callback(Output('page-content', 'children'),
               [Input('app-tabs', 'value')])
 def display_page(tab):
-    if tab == 'tab2':
+    if tab == 'tab0':
+        return background_page
+    elif tab == 'tab2':
         return sentiment_analysis_page
     elif tab == 'tab3':
         return topic_data_page
+    elif tab == 'tab4':
+        return interpretation_page
     else:
         return index_page
 

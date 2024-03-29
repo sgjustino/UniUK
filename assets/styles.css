@@ -236,6 +236,47 @@ body {
     border-bottom: #91dfd2 solid 4px !important;
 }
 
+/* Background and Interpretation Pages
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+#Background-tab.custom-tab,
+#Interpretation-tab.custom-tab {
+    background-color: #36454F;
+    letter-spacing: 1px;
+    color: white;
+    font-family: 'Lato', sans-serif; 
+    border: 0;
+    border-bottom: #1E2130 solid 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    height: 18px;
+}
+
+#Background-tab.custom-tab--selected,
+#Interpretation-tab.custom-tab--selected {
+    border-bottom: #91dfd2 solid 4px !important;
+}
+
+#Background-tab.custom-tab {
+    margin-right: 3px;
+}
+
+#Interpretation-tab.custom-tab {
+    margin-left: 3px;
+}
+
+.html-content {
+    width: 100%;
+    height: 500px;
+}
+
+.topic-data-table {
+    margin-bottom: 130px;
+}
+
 /* Media Queries for Mobile Responsiveness */
 @media (max-width: 600px) {
     /* Adjust main title and Learn More button */
