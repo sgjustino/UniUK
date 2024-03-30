@@ -74,7 +74,7 @@ app.layout = html.Div([
         children=[
             html.Div(
                 children=[
-                    html.H2('R/UniUK Sentiment Dashboard'),
+                    html.H2('How do UK university students\' sentiments and discussion themes on Reddit evolve over time?'),
                     html.P(
                         'Examining key themes and sentiment trends from r/UniUK posts (2016-2023) to understand the changing perspectives and emotional dynamics of UK university students.',
                         style={'fontSize': '14px', 'color': '#aaaaaa'}
@@ -145,22 +145,49 @@ app.layout = html.Div([
 #################
 
 background_page = html.Div([
-    html.H2("Research Question: What are university students in the UK thinking and how do their sentiments change over time?", className="title"),    
-    html.H2("Data Source", className="title"),
+    html.H2("Background", className="title"),    
     dcc.Markdown('''
-    The data prior to April 2023 was collected by an open-source project called Pushshift and hosted on academictorrents.com.
-    https://academictorrents.com/details/56aa49f9653ba545f48df2e33679f014d2829c10
+    While research studies have provided valuable insights into students' perceptions (e.g., Reddy, Menon & Thattil, 2018), their scope is often limited by the number of participants and the formal nature of surveys and focus groups. 
+    In contrast, social media platforms host a wealth of unsolicited, candid discussions on university life, reflecting a broader spectrum of UK university students' sentiments. 
+    Analyzing these discussions can uncover nuanced perspectives on university experiences, including issues and positive aspects that may not emerge in formal research settings. 
     '''),
-
-    html.H2("Data Preprocessing", className="title"),
     dcc.Markdown('''
-    The data preprocessing steps, including text refinement using the NLTK library, sentiment analysis using VaderSentiment, and topic modeling using BerTopic, are not covered in this repository. 
-    The preprocessing code can be found at https://www.kaggle.com/code/sgjustino/uniuk-topic-modeling-with-bertopic?scriptVersionId=168342984.
+    To gain a comprehensive understanding of UK university students' thoughts and feelings, we analyzed and visualized social media data from the subreddit r/UniUK. 
+    This subreddit contains a vast number of posts and comments that offer unique insights into university life in the UK. 
+    By examining this data, we identified prevalent themes and trends in student sentiment over time. 
+    The interactive dashboard presented here showcases these themes and their popularity over time, as well as the sentiment (positive, neutral, negative) associated with each theme. 
+    This visualization allows users to explore topics of interest and gain a deeper understanding of the evolving sentiments expressed by UK university students on Reddit. 
+    By providing an accessible and interactive means to engage with this data, the dashboard serves as a valuable tool for answering the research question and uncovering insights that may inform future studies and decision-making in higher education.
     '''),
-
-    html.H2("Meta-Data for Dashboard", className="title"),
+    
+    html.H2("Navigating the Dashboard", className="title"),
+    dcc.Markdown('''
+    The dashboard is built using Dash (Plotly) with the following components:
+    '''),
+    html.Li("Background Page: Provides an overview of the motivation behind the study, explaining how the project aims to address the research question. It includes a brief guide on navigating and using the dashboard and contains additional information about the data source, preprocessing steps, and references."),
+    html.Li("Topic Frequency Page: XX."),
+    html.Li("Sentiment Analysis Page: XX."),
+    html.Li("Topic Data Page: XX."),
+    html.Li("Interpretation Page: XX."),
+    html.Li(html.A("Find out more information about this project.", href="https://github.com/sgjustino/UniUK", target="_blank")),
+    
+    html.H2("Data Source and Preprocessing", className="title"),
+    dcc.Markdown('''
+    The data, spanning from February 2016 (the inception of Subreddit r/UniUK) to December 2023, was obtained from academic torrents hosted online and collected by an open-source project called Pushshift. 
+    To prepare the data for analysis and answer the research question, several pre-processing steps were undertaken. 
+    First, the data was cleaned using custom stopwords and the NLTK library to remove irrelevant information and improve the quality of the dataset. 
+    Next, sentiment analysis was performed using VaderSentiment to determine the polarity (positive, neutral, and negative) of each post and comment. 
+    Finally, topic modeling was conducted using BerTopic to identify and categorize the main themes within the data.
+    '''),
+    dcc.Markdown('''
+    To simplify the project workflow and focus on the visualisation aspects, the detailed data pre-processing steps, which involve heavy computational processes in generating sentiments and topics, are not covered in this project. 
+    However, the comprehensive modeling process and results are shared in the accompanying Kaggle notebook, providing a transparent and reproducible account of the data analysis.
+    '''),
+    html.Li(html.A("Link to Data Source", href="https://academictorrents.com/details/56aa49f9653ba545f48df2e33679f014d2829c10", target="_blank")),
+    html.Li(html.A("Link to Preprocessing and Modeling Notebook", href="https://www.kaggle.com/code/sgjustino/uniuk-topic-modeling-with-bertopic?scriptVersionId=168342984", target="_blank")),
+    
+    html.H2("Meta-Data for Processed Data", className="title"),
     html.Div([
-        html.P("Here is a preview of the data with an explanation of each column:"),
         dash_table.DataTable(
             data=sentiment_data.head().to_dict('records'),
             columns=[{"name": i, "id": i} for i in sentiment_data.columns],
@@ -177,22 +204,14 @@ background_page = html.Div([
             }
         ),
         html.Ul([
+            html.Li("body: The text content within a post. It encompasses both initial submissions (which start discussion threads) and subsequent comments. By analyzing these elements collectively, we treat them as a unified set of social media posts for examination."),
             html.Li("created_utc: The timestamp of when the post was created."),
-            html.Li("body: The content of the post."),
             html.Li("sentiment: The sentiment of the post as determined by VaderSentiment (positive, neutral, or negative)."),
-            html.Li("Topic: The topic number that the post belongs to as determined by BerTopic."),
-            html.Li("Topic_Label: The descriptive label for the topic.")
+            html.Li("processed_text: The processed content of the post using custom stopwords and NLTK library."),
+            html.Li("Topic: The topic number that the post belongs to as determined by BerTopic. Topic 74 refers to the outliers not classified into any specific topic."),
+            html.Li("Topic_Label: The descriptive label assigned to each topic, derived from the four most representative words identified through a class-based Term Frequency-Inverse Document Frequency analysis of the topic's content (Grootendorst, 2022).")
         ])
     ]),
-
-    html.H2("Dashboard Explanation", className="title"),
-    dcc.Markdown('''
-    The visualization part of the project showcases the identified themes and their popularity over time, as well as the sentiment (positive, neutral, negative) associated with each theme. It also includes a data table to explore the actual data. The dashboard is built using Dash (Plotly).
-    '''),
-
-    html.H2("Learn More", className="title"),
-    html.P(html.A("Click here", href="https://github.com/sgjustino/UniUK", target="_blank"), " to find out more information about this project."),
-
     html.H2("Built With", className="title"),
     html.Ul([
         html.Li(html.A("NLTK", href="https://github.com/nltk/nltk", target="_blank")),
@@ -205,6 +224,7 @@ background_page = html.Div([
 
     html.H2("References", className="title"),
     html.Ul([
+        html.Li("Reddy, K. J., Menon, K. R., & Thattil, A. (2018). Academic stress and its sources among university students. Biomedical and pharmacology journal, 11(1), 531-537."),
         html.Li("Hutto, C.J. & Gilbert, E.E. (2014). VADER: A Parsimonious Rule-based Model for Sentiment Analysis of Social Media Text. Eighth International Conference on Weblogs and Social Media (ICWSM-14). Ann Arbor, MI, June 2014."),
         html.Li("Solatorio, A. V. (2024). GISTEmbed: Guided In-sample Selection of Training Negatives for Text Embedding Fine-tuning. arXiv preprint arXiv:2402.16829. https://arxiv.org/abs/2402.16829"),
         html.Li("Grootendorst, M. (2022). BERTopic: Neural topic modeling with a class-based TF-IDF procedure. arXiv preprint arXiv:2203.05794.")
@@ -370,20 +390,21 @@ interpretation_page = html.Div([
     html.Div([
         dcc.Graph(figure=generate_sentiment_analysis_gif(sentiment_data)),
         html.P("Users can then zoom in on specific Topic of Interest to understand how sentiments within a topic trend over time. For example, looking at mental health/general health/disability as a topic (Topic 8), we can analyze how positive, neutral and negative posts trend across time. Notably, we can see that such posts are on an increasing uptrend, similar to other topics across the subreddit forum. It is easy to paint a congruent image when we compare with other research that shows that e.g. mental distress has been an increasing uptrend, especially with Covid-19 pandemic (Gagné et al., 2021). However, looking at the normalized frequency, we can see clearly that the proportion of sentiments has been relatively stable across time, with almost twice the number of positive posts to each negative post. Importantly, this does not refute the claims from research. But it does suggest that there is something different for online social media discourse relating to mental health."),
-        html.P("Gagné, T., Schoon, I., McMunn, A., & Sacker, A. (2021). Mental distress among young adults in Great Britain: long-term trends and early changes during the COVID-19 pandemic. Social Psychiatry and Psychiatric Epidemiology, 1-12.", className="reference")
     ], className="interpretation-section"),
     
     html.Div([
         html.Div([
             generate_topic_data_table(sentiment_data)
-        ], className="topic-data-table"),
+        ], className="interpretation-table-section"),
         html.Div([
-            html.P("Subsequently, such observations can be confirmed or further explored by diving into specific posts from Topic Data tab. The analysis here provide an interesting observation - students are increasingly posting about mental health topics (e.g. highlighting stress in school) and then receiving social support on an online forum (subreddit r/UniUK) and perhaps building a community that help each other, provide assurance and advice in dealing with mental health issues - with twice the number of positive posts to each negative post. While research showed that mental health concerns are on a rise, online social media discourse suggest an interesting channel of social support that are outside of current structured university mental health support system. As youths are increasingly using social media for social connectedness in countering mental health (Winstone et al., 2021), the brief analysis here suggest a growing necessity to encompass or even integrate social media platforms to synergize official university mental health support efforts."),
-            html.P("Winstone, L., Mars, B., Haworth, C. M., & Kidger, J. (2021). Social media use and social connectedness among adolescents in the United Kingdom: a qualitative exploration of displacement and stimulation. BMC public health, 21, 1-15.", className="reference")
-        ], className="topic-data-text")
+            html.P("Subsequently, such observations can be confirmed or further explored by diving into specific posts from Topic Data tab. The analysis here provide an interesting observation - students are increasingly posting about mental health topics (e.g. highlighting stress in school) and then receiving social support on an online forum (subreddit r/UniUK) and perhaps building a community that help each other, provide assurance and advice in dealing with mental health issues - with twice the number of positive posts to each negative post. While research showed that mental health concerns are on a rise, online social media discourse suggest an interesting channel of social support that are outside of current structured university mental health support system. As youths are increasingly using social media for social connectedness in countering mental health (Winstone et al., 2021), the brief analysis here suggest a growing necessity to encompass or even integrate social media platforms to synergize official university mental health support efforts.")
+        ], className="interpretation-section")
     ], className="interpretation-section"),
     
     html.P("As stated, this project seeks to understand what university students in UK are thinking and how do their sentiments change over time. Using mental health as a topic, we provided an example of how social media discourse could be harnessed to understand an increasingly growing part of university students' lives - social media consumption. While this dashboard serves as an exploratory visualization to understand the research question, clearly from the mental health example, there is a need for more effort to understand social media discourse to better understand our university students."),
+    html.P("References", className="title"),    
+    html.Li("Gagné, T., Schoon, I., McMunn, A., & Sacker, A. (2021). Mental distress among young adults in Great Britain: long-term trends and early changes during the COVID-19 pandemic. Social Psychiatry and Psychiatric Epidemiology, 1-12.", className="reference"),
+    html.P("Winstone, L., Mars, B., Haworth, C. M., & Kidger, J. (2021). Social media use and social connectedness among adolescents in the United Kingdom: a qualitative exploration of displacement and stimulation. BMC public health, 21, 1-15.", className="reference")
 ])
 
 #################
