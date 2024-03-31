@@ -74,7 +74,7 @@ app.layout = html.Div([
         children=[
             html.Div(
                 children=[
-                    html.H2('How do UK university students\' sentiments and discussion themes on Reddit evolve over time?'),
+                    html.H2('How do the perspectives of UK university students, as expressed on Reddit, evolve over time?'),
                     html.P(
                         'Examining key themes and sentiment trends from r/UniUK posts (2016-2023) to understand the changing perspectives and emotional dynamics of UK university students.',
                         style={'fontSize': '14px', 'color': '#aaaaaa'}
@@ -147,44 +147,45 @@ app.layout = html.Div([
 background_page = html.Div([
     html.H2("Background", className="title"),    
     dcc.Markdown('''
-    While research studies have provided valuable insights into students' perceptions (e.g., Reddy, Menon & Thattil, 2018), their scope is often limited by the number of participants and the formal nature of surveys and focus groups. 
-    In contrast, social media platforms host a wealth of unsolicited, candid discussions on university life, reflecting a broader spectrum of UK university students' sentiments. 
-    Analyzing these discussions can uncover nuanced perspectives on university experiences, including issues and positive aspects that may not emerge in formal research settings. 
+    Traditional research studies, often relying on methodologies such as surveys, interviews, or focus groups, are typically constrained by the scale of recruitment and tend to capture student perspectives in more structured, formal environments (e.g. Briggs, Clark & Hall, 2012; Reddy, Menon & Thattil, 2018).
+    In contrast, social media platforms are rich with spontaneous, unfiltered discussions about university life, offering a wider and more authentic range of student viewpoints.
+    Analyzing these social media conversations can reveal subtle and candid insights into the university experience - insights that students might be reluctant to share in the more controlled settings of traditional research methods.
+    Besides that, this approach provides access to a larger volume of data points, capturing a diverse array of student voices and experiences.
+    Recognizing the rich insights that social media conversations offer, we thus turn our attention to the research question:
     '''),
+    html.H2("RQ: How do the perspectives of UK university students, as expressed on Reddit, evolve over time?", className="title"), 
     dcc.Markdown('''
-    To gain a comprehensive understanding of UK university students' thoughts and feelings, we analyzed and visualized social media data from the subreddit r/UniUK. 
-    This subreddit contains a vast number of posts and comments that offer unique insights into university life in the UK. 
-    By examining this data, we identified prevalent themes and trends in student sentiment over time. 
-    The interactive dashboard presented here showcases these themes and their popularity over time, as well as the sentiment (positive, neutral, negative) associated with each theme. 
-    This visualization allows users to explore topics of interest and gain a deeper understanding of the evolving sentiments expressed by UK university students on Reddit. 
-    By providing an accessible and interactive means to engage with this data, the dashboard serves as a valuable tool for answering the research question and uncovering insights that may inform future studies and decision-making in higher education.
+    To address this, we examined the social media data from the subreddit r/UniUK, a hub for candid UK university student discussions. 
+    Our analysis of the numerous posts and comments within this community has led to the identification of key themes and the sentiment trends associated with them over time. 
+    Users can navigate the interactive dashboard to explore specific areas of interest, thereby gaining a nuanced understanding of how the sentiments of UK university students on Reddit have evolve over time. 
+    This tool not only aids in answering our research question but also provides a foundation for further research and informed decision-making within the realm of higher education.
     '''),
     
     html.H2("Navigating the Dashboard", className="title"),
     dcc.Markdown('''
     The dashboard is built using Dash (Plotly) with the following components:
     '''),
-    html.Li("Background Page: Provides an overview of the motivation behind the study, explaining how the project aims to address the research question. It includes a brief guide on navigating and using the dashboard and contains additional information about the data source, preprocessing steps, and references."),
-    html.Li("Topic Frequency Page: XX."),
-    html.Li("Sentiment Analysis Page: XX."),
-    html.Li("Topic Data Page: XX."),
-    html.Li("Interpretation Page: XX."),
-    html.Li(html.A("Find out more information about this project.", href="https://github.com/sgjustino/UniUK", target="_blank")),
-    
+    html.Li("Background Page: Introduces the study motivation and research question, guides users on exploring the dashboard findings and provide additional details like data source, preprocessing steps and references."),
+    html.Li("Topic Frequency Page: Allows users to view the frequency of selected topics over time, either as absolute counts or normalized percentages, to identify popular topics and trends over time."),
+    html.Li("Sentiment Analysis Page: Enables users to analyze sentiment trends for a specific topic over time, using absolute or normalized frequency views, to understand the emotional tone of discussions."),
+    html.Li("Topic Data Page: Provides a table view of the individual posts for a selected topic and year range, with sentiment indicated by cell color, allowing users to explore specific discussions."),
+    html.Li("Interpretation Page: Demonstrates how to use the dashboard to examine the research question through an example analysis of a specific topic, showcasing insights and conclusions."),
+    html.Li(html.A("Find out more at the github repository", href="https://github.com/sgjustino/UniUK", target="_blank")),
+
     html.H2("Data Source and Preprocessing", className="title"),
     dcc.Markdown('''
     The data, spanning from February 2016 (the inception of Subreddit r/UniUK) to December 2023, was obtained from academic torrents hosted online and collected by an open-source project called Pushshift. 
-    To prepare the data for analysis and answer the research question, several pre-processing steps were undertaken. 
+    To prepare the data for analysis and answer the research question, several pre-processing steps and modeling were undertaken. 
     First, the data was cleaned using custom stopwords and the NLTK library to remove irrelevant information and improve the quality of the dataset. 
-    Next, sentiment analysis was performed using VaderSentiment to determine the polarity (positive, neutral, and negative) of each post and comment. 
+    Next, sentiment analysis was performed using VaderSentiment to determine the polarity (positive, neutral, and negative) of each post.
     Finally, topic modeling was conducted using BerTopic to identify and categorize the main themes within the data.
     '''),
     dcc.Markdown('''
-    To simplify the project workflow and focus on the visualisation aspects, the detailed data pre-processing steps, which involve heavy computational processes in generating sentiments and topics, are not covered in this project. 
-    However, the comprehensive modeling process and results are shared in the accompanying Kaggle notebook, providing a transparent and reproducible account of the data analysis.
+    To focus on the visualisation aspects, the detailed data modeling steps are not covered in this project repository. 
+    However, the modeling process are shared in the accompanying Kaggle notebook, providing a reproducible account of the data analysis.
     '''),
     html.Li(html.A("Link to Data Source", href="https://academictorrents.com/details/56aa49f9653ba545f48df2e33679f014d2829c10", target="_blank")),
-    html.Li(html.A("Link to Preprocessing and Modeling Notebook", href="https://www.kaggle.com/code/sgjustino/uniuk-topic-modeling-with-bertopic?scriptVersionId=168342984", target="_blank")),
+    html.Li(html.A("Link to Modeling Notebook", href="https://www.kaggle.com/code/sgjustino/uniuk-topic-modeling-with-bertopic?scriptVersionId=168342984", target="_blank")),
     
     html.H2("Meta-Data for Processed Data", className="title"),
     html.Div([
@@ -214,20 +215,22 @@ background_page = html.Div([
     ]),
     html.H2("Built With", className="title"),
     html.Ul([
-        html.Li(html.A("NLTK", href="https://github.com/nltk/nltk", target="_blank")),
-        html.Li(html.A("BERTopic", href="https://github.com/MaartenGr/BERTopic", target="_blank")),
-        html.Li(html.A("VaderSentiment", href="https://github.com/cjhutto/vaderSentiment", target="_blank")),
-        html.Li(html.A("Dash (Plotly)", href="https://github.com/plotly/dash", target="_blank")),
-        html.Li(html.A("Dash Opioid Epidemic Demo (inspiration for sliders)", href="https://github.com/plotly/dash-opioid-epidemic-demo", target="_blank")),
-        html.Li(html.A("Dash Manufacture SPC Dashboard (inspiration for tabs)", href="https://github.com/dkrizman/dash-manufacture-spc-dashboard", target="_blank"))
+        html.Li(html.A("Pre-processing with NLTK", href="https://github.com/nltk/nltk", target="_blank")),
+        html.Li(html.A("Sentiment classification with VaderSentiment", href="https://github.com/cjhutto/vaderSentiment", target="_blank")),
+        html.Li(html.A("Topic Modeling with BERTopic", href="https://github.com/MaartenGr/BERTopic", target="_blank")),
+        html.Li(html.A("Dashboard Development with Dash (Plotly)", href="https://github.com/plotly/dash", target="_blank")),
+        html.Li(html.A("Inspiration for ranger sliders from Dash Opioid Epidemic Demo", href="https://github.com/plotly/dash-opioid-epidemic-demo", target="_blank")),
+        html.Li(html.A("Inspiration for tabs from Dash Manufacture SPC Dashboard", href="https://github.com/dkrizman/dash-manufacture-spc-dashboard", target="_blank")),
+        html.Li("ChatGPT4 and Claude 3 Opus were utilised for code development and bug fixing.")
     ]),
 
     html.H2("References", className="title"),
     html.Ul([
-        html.Li("Reddy, K. J., Menon, K. R., & Thattil, A. (2018). Academic stress and its sources among university students. Biomedical and pharmacology journal, 11(1), 531-537."),
+        html.Li("Briggs, A. R., Clark, J., & Hall, I. (2012). Building bridges: understanding student transition to university. Quality in higher education, 18(1), 3-21."),
+        html.Li("Grootendorst, M. (2022). BERTopic: Neural topic modeling with a class-based TF-IDF procedure. arXiv preprint arXiv:2203.05794."),
         html.Li("Hutto, C.J. & Gilbert, E.E. (2014). VADER: A Parsimonious Rule-based Model for Sentiment Analysis of Social Media Text. Eighth International Conference on Weblogs and Social Media (ICWSM-14). Ann Arbor, MI, June 2014."),
-        html.Li("Solatorio, A. V. (2024). GISTEmbed: Guided In-sample Selection of Training Negatives for Text Embedding Fine-tuning. arXiv preprint arXiv:2402.16829. https://arxiv.org/abs/2402.16829"),
-        html.Li("Grootendorst, M. (2022). BERTopic: Neural topic modeling with a class-based TF-IDF procedure. arXiv preprint arXiv:2203.05794.")
+        html.Li("Reddy, K. J., Menon, K. R., & Thattil, A. (2018). Academic stress and its sources among university students. Biomedical and pharmacology journal, 11(1), 531-537."),
+        html.Li("Solatorio, A. V. (2024). GISTEmbed: Guided In-sample Selection of Training Negatives for Text Embedding Fine-tuning. arXiv preprint arXiv:2402.16829.")
     ])
 ])
 
@@ -379,12 +382,10 @@ topic_data_page = html.Div([
 #################
 
 interpretation_page = html.Div([
-    html.H2("Research Question: What are university students in the UK thinking and how do their sentiments change over time?", className="title"),    
-    html.P("First, we will talk about how the 3 Analysis Tabs (Topic Frequency, Sentiment Analysis, Topic Data) will allow a thorough examination of the Research Question."),
-    
+    html.H2("RQ: How do the perspectives of UK university students, as expressed on Reddit, evolve over time?", className="title"),        
     html.Div([
         dcc.Graph(figure=generate_topic_frequency_gif(sentiment_data, topic_max)),
-        html.P("Users can first look at the overall trends of topics that university students in UK are talking about on Reddit. However, as the popularity of the subreddit forum grows, absolute frequency would just show an increasing trend for all topics. Viewing the data by normalized frequency will allow us to see how topics trend relatively to other topics over time, to gauge or gain insights on the 'hottest' topics across time. Notably, the % is based on selected topics, and by selecting all 74 topics (including Topic 74 - Outliers), will allow us to examine the overall proportions of topics across all reddit activities on r/UniUK.")
+        html.P("Looking at the Topic Frequency page first, users can first look at the overall trends of topics that university students in UK are talking about on Reddit. However, as the popularity of the subreddit forum grows, absolute frequency would just show an increasing trend for all topics. Viewing the data by normalized frequency will allow us to see how topics trend relatively to other topics over time, to gauge or gain insights on the 'hottest' topics across time. Notably, the % is based on selected topics, and by selecting all 74 topics (including Topic 74 - Outliers), will allow us to examine the overall proportions of topics across all reddit activities on r/UniUK.")
     ], className="interpretation-section"),
     
     html.Div([
