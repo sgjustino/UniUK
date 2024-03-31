@@ -77,7 +77,7 @@ app.layout = html.Div([
                     html.H2('How do the perspectives of UK university students, as expressed on Reddit, evolve over time?'),
                     html.P(
                         'Examining key themes and sentiment trends from r/UniUK posts (2016-2023) to understand the changing perspectives and emotional dynamics of UK university students.',
-                        style={'fontSize': '14px', 'color': '#aaaaaa'}
+                        style={'fontSize': '14px', 'color': '#efefef'}
                     ),
                 ]
             )
@@ -247,7 +247,7 @@ index_page = html.Div([
     html.Br(),
     "(2) Select Type of Frequency: Absolute or Normalized (% frequency across selected topics)."
     ], style={
-        'color': '#aaaaaa',  
+        'color': '#efefef',  
         'fontWeight': 'bold',  
         'fontSize': '14px',
         'marginTop': '-5px' 
@@ -302,7 +302,7 @@ sentiment_analysis_page = html.Div([
     html.Br(),
     "(2) Select Type of Frequency: Absolute or Normalized (% frequency across selected topics)."
     ], style={
-        'color': '#aaaaaa',  
+        'color': '#efefef',  
         'fontWeight': 'bold',  
         'fontSize': '14px',
         'marginTop': '-5px'
@@ -340,7 +340,7 @@ topic_data_page = html.Div([
     html.Br(),
     "(2) Select Range of Years."
     ],  style={
-        'color': '#aaaaaa',  
+        'color': '#efefef',  
         'fontWeight': 'bold',  
         'fontSize': '14px',
         'marginTop': '-5px' 
@@ -384,6 +384,7 @@ topic_data_page = html.Div([
 
 interpretation_page = html.Div([
     html.H2("Answering the RQ: How do the perspectives of UK university students, as expressed on Reddit, evolve over time?", className="title"),        
+    
     html.Div([
         dcc.Graph(figure=generate_topic_frequency_html(sentiment_data, topic_max)),
         dcc.Markdown('''
@@ -397,9 +398,8 @@ interpretation_page = html.Div([
     Notably, topics related to mental health, general health and disabilities (Topic 8) also consistently rank among the most frequently discussed issues. 
     This observation aligns with the growing concern about student mental health in higher education (Winstone et al., 2021). 
     To further understand how these data can help us comprehend the experiences and needs of UK university students, we will delve deeper into the mental health topic as a specific area of interest in the subsequent analysis.
-    '''),
-
-    ], className="interpretation-section"),
+    ''')
+    ,]),
     
     html.Div([
         dcc.Graph(figure=generate_sentiment_analysis_html(sentiment_data)),
@@ -410,13 +410,14 @@ interpretation_page = html.Div([
         This finding suggests that while mental health concerns are indeed prevalent among UK university students, as corroborated by existing research (Gagné et al., 2021), the discourse on Reddit appears to have a more supportive and encouraging tone. 
         The higher proportion of positive posts could indicate that students are finding solace, advice, and a sense of community through these online discussions.
     '''),
-    ], className="interpretation-section"),
+    ]),
     
     html.Div([
         html.P("Topic Data - Topic 8: Mental, Health, Adhd, Gp", className="title-center"), 
         html.Div([
             generate_topic_data_table(sentiment_data)
-        ], className="interpretation-table-section"),
+        ], style={'height': '600px', 'overflow': 'auto'}),
+        
         dcc.Markdown('''
         Looking at the data table, a closer examination of the content within Topic 8 reveals that students are increasingly turning to the r/UniUK forum to share their mental health struggles, seek advice, and offer support to their peers (page 3 of Topic 8 shown here; see Topic Data page for more). 
         The posts highlight the various stressors that students face, such as academic pressure, social isolation, and financial worries. 
@@ -426,8 +427,10 @@ interpretation_page = html.Div([
         The analysis of social media discourse on r/UniUK thus provides insights into how these platforms can complement traditional mental health support systems in better understanding and supporting UK university students' well-being needs.
         Notably, this dashboard is an exploratory tool to examine various topics through topic frequencies and sentiment trends, offering a nuanced understanding of the authentic student experience. 
         Future research could extend this tool to investigate integrating social media insights into student policies and intervention plans to better support university life.
-    '''),
-    ], className="interpretation-section"),
+    ''')
+    ]),
+
+    
     html.P("Limitation",className="title"),
       dcc.Markdown('''
     X
@@ -730,7 +733,7 @@ def update_topic_data(selected_topic_label, year_range):
                 data=filtered_data.to_dict('records'),
                 page_size=10,
                 style_header={
-                    'backgroundColor': 'black',
+                    'backgroundColor': '#111111',
                     'color': 'white',
                     'fontWeight': 'bold',
                     'text-align': 'left',

@@ -4,7 +4,7 @@
     text-align: left; 
     color: white;
     font-weight: bold;
-    background-color: black; 
+    background-color: #212121; 
     padding: 1px 5px; 
     margin-top: -25px;
     margin-bottom: 0px;
@@ -43,7 +43,7 @@
 /* Global Styles
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 body {
-    background-color: black;
+    background-color: #212121;
     color: white;
     font-family: 'Lato', sans-serif; 
 }
@@ -160,13 +160,13 @@ body {
 /* Topic Frequency Analysis
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 #topic-frequency-graph {
-    background-color: black;
+    background-color: #212121;
 }
 
 /* Sentiment Shift Analysis
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 #sentiment-analysis-graph {
-    background-color: black;
+    background-color: #212121;
 }
 
 /* Topic Data
@@ -174,20 +174,22 @@ body {
 #topic-data-table .dash-table-container {
     font-size: 16px;
     font-family: 'Lato', sans-serif; 
+    height: 600px;
+    overflow-y: auto;
 }
 
 #topic-data-table .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table {
     --accent: #91dfd2;
     --hover: #6bc7b6;
     --text-color: white;
-    --background-color: black;
-    --alt-background-color: #161a28;
+    --background-color: #111111;
+    --alt-background-color: #212121;
     table-layout: fixed;
     width: 100%;
 }
 
 #topic-data-table .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table thead th {
-    background-color: #161a28; 
+    background-color: #111111; 
     color: white; 
     font-weight: bold; 
     font-size: 16px; 
@@ -195,7 +197,7 @@ body {
 }
 
 #topic-data-table .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table tbody td {
-    background-color: #353839; 
+    background-color: #111111; 
     color: white; 
     border: 1px solid #588A87; 
     text-align: left; 
@@ -268,22 +270,19 @@ body {
     margin-left: 3px;
 }
 
-.interpretation-table-section {
-    margin-bottom: 130px;
-}
-
 .html-content {
     width: 100%;
     height: 500px;
 }
 
 li a {
-    color: #91dfd2;
-    text-decoration: none;
+    color: #e7decc;
+    text-decoration: underline;
 }
 
 li a:hover {
     color: white;
+    text-decoration: underline;
 }
 
 #sentiment-analysis-graph .gtitle {
