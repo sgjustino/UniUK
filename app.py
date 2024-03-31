@@ -7,7 +7,7 @@ from dash import dcc
 from dash import html as html
 from dash.dependencies import Input, Output
 from dash import dash_table
-from interpretation import generate_topic_frequency_gif, generate_sentiment_analysis_gif, generate_topic_data_table
+from interpretation import generate_topic_frequency_html, generate_sentiment_analysis_html, generate_topic_data_table
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
@@ -153,7 +153,7 @@ background_page = html.Div([
     Besides that, this approach provides access to a larger volume of data points, capturing a diverse array of student voices and experiences.
     Recognizing the rich insights that social media conversations offer, we thus turn our attention to the research question:
     '''),
-    html.H2("RQ: How do the perspectives of UK university students, as expressed on Reddit, evolve over time?", className="title"), 
+    html.H2("How do the perspectives of UK university students, as expressed on Reddit, evolve over time?", className="title"), 
     dcc.Markdown('''
     To address this, we examined the social media data from the subreddit r/UniUK, a hub for candid UK university student discussions. 
     Our analysis of the numerous posts and comments within this community has led to the identification of key themes and the sentiment trends associated with them over time. 
@@ -229,6 +229,7 @@ background_page = html.Div([
         html.Li("Briggs, A. R., Clark, J., & Hall, I. (2012). Building bridges: understanding student transition to university. Quality in higher education, 18(1), 3-21."),
         html.Li("Grootendorst, M. (2022). BERTopic: Neural topic modeling with a class-based TF-IDF procedure. arXiv preprint arXiv:2203.05794."),
         html.Li("Hutto, C.J. & Gilbert, E.E. (2014). VADER: A Parsimonious Rule-based Model for Sentiment Analysis of Social Media Text. Eighth International Conference on Weblogs and Social Media (ICWSM-14). Ann Arbor, MI, June 2014."),
+        html.Li("Baumgartner, J., Zannettou, S., Keegan, B., Squire, M., & Blackburn, J. (2020, May). The pushshift reddit dataset. In Proceedings of the international AAAI conference on web and social media (Vol. 14, pp. 830-839)."),
         html.Li("Reddy, K. J., Menon, K. R., & Thattil, A. (2018). Academic stress and its sources among university students. Biomedical and pharmacology journal, 11(1), 531-537."),
         html.Li("Solatorio, A. V. (2024). GISTEmbed: Guided In-sample Selection of Training Negatives for Text Embedding Fine-tuning. arXiv preprint arXiv:2402.16829.")
     ])
@@ -382,30 +383,62 @@ topic_data_page = html.Div([
 #################
 
 interpretation_page = html.Div([
-    html.H2("RQ: How do the perspectives of UK university students, as expressed on Reddit, evolve over time?", className="title"),        
+    html.H2("Answering the RQ: How do the perspectives of UK university students, as expressed on Reddit, evolve over time?", className="title"),        
     html.Div([
-        dcc.Graph(figure=generate_topic_frequency_gif(sentiment_data, topic_max)),
-        html.P("Looking at the Topic Frequency page first, users can first look at the overall trends of topics that university students in UK are talking about on Reddit. However, as the popularity of the subreddit forum grows, absolute frequency would just show an increasing trend for all topics. Viewing the data by normalized frequency will allow us to see how topics trend relatively to other topics over time, to gauge or gain insights on the 'hottest' topics across time. Notably, the % is based on selected topics, and by selecting all 74 topics (including Topic 74 - Outliers), will allow us to examine the overall proportions of topics across all reddit activities on r/UniUK.")
+        dcc.Graph(figure=generate_topic_frequency_html(sentiment_data, topic_max)),
+        dcc.Markdown('''
+    The topic frequency graph provides an overview of the most prevalent themes discussed by UK university students on Reddit. 
+    While absolute frequency shows an increasing trend for all topics as the subreddit grows in popularity (not shown above; see Topic Frequency page), normalizing the data allows us to identify the relative prominence of each topic over time. Among the top topics, we find a mix of academic concerns (e.g., accommodation, university applications), social aspects (e.g., making friends, societies), and personal well-being (e.g., mental health, finance).
+    First, the prominence of topics such as job, university choice and application, accommodation and finance highlights the practical challenges that students face in their university journey.
+    Likely, students view such social media platforms as an avenue of seeking help and advice from other UK university students who have experienced similar concerns.
+    These discussions not only provide valuable peer-to-peer support but also offer insights into the common struggles and decision-making processes of students.
+    '''),
+    dcc.Markdown('''
+    Notably, topics related to mental health, general health and disabilities (Topic 8) also consistently rank among the most frequently discussed issues. 
+    This observation aligns with the growing concern about student mental health in higher education (Winstone et al., 2021). 
+    To further understand how these data can help us comprehend the experiences and needs of UK university students, we will delve deeper into the mental health topic as a specific area of interest in the subsequent analysis.
+    '''),
+
     ], className="interpretation-section"),
     
     html.Div([
-        dcc.Graph(figure=generate_sentiment_analysis_gif(sentiment_data)),
-        html.P("Users can then zoom in on specific Topic of Interest to understand how sentiments within a topic trend over time. For example, looking at mental health/general health/disability as a topic (Topic 8), we can analyze how positive, neutral and negative posts trend across time. Notably, we can see that such posts are on an increasing uptrend, similar to other topics across the subreddit forum. It is easy to paint a congruent image when we compare with other research that shows that e.g. mental distress has been an increasing uptrend, especially with Covid-19 pandemic (Gagné et al., 2021). However, looking at the normalized frequency, we can see clearly that the proportion of sentiments has been relatively stable across time, with almost twice the number of positive posts to each negative post. Importantly, this does not refute the claims from research. But it does suggest that there is something different for online social media discourse relating to mental health."),
+        dcc.Graph(figure=generate_sentiment_analysis_html(sentiment_data)),
+        dcc.Markdown('''
+        Zooming in on the sentiment analysis graph for Topic 8 (mental health, general health, and disability), we observe an interesting trend. 
+        While the absolute number of posts related to this topic is increasing (not shown above; see Sentiment Analysis page), the proportion of positive, neutral, and negative sentiments remains relatively stable over time. 
+        Notably, positive posts consistently outnumber negative ones by a ratio of nearly 2:1.
+        This finding suggests that while mental health concerns are indeed prevalent among UK university students, as corroborated by existing research (Gagné et al., 2021), the discourse on Reddit appears to have a more supportive and encouraging tone. 
+        The higher proportion of positive posts could indicate that students are finding solace, advice, and a sense of community through these online discussions.
+    '''),
     ], className="interpretation-section"),
     
     html.Div([
+        html.P("Topic Data - Topic 8: Mental, Health, Adhd, Gp", className="title-center"), 
         html.Div([
             generate_topic_data_table(sentiment_data)
         ], className="interpretation-table-section"),
-        html.Div([
-            html.P("Subsequently, such observations can be confirmed or further explored by diving into specific posts from Topic Data tab. The analysis here provide an interesting observation - students are increasingly posting about mental health topics (e.g. highlighting stress in school) and then receiving social support on an online forum (subreddit r/UniUK) and perhaps building a community that help each other, provide assurance and advice in dealing with mental health issues - with twice the number of positive posts to each negative post. While research showed that mental health concerns are on a rise, online social media discourse suggest an interesting channel of social support that are outside of current structured university mental health support system. As youths are increasingly using social media for social connectedness in countering mental health (Winstone et al., 2021), the brief analysis here suggest a growing necessity to encompass or even integrate social media platforms to synergize official university mental health support efforts.")
-        ], className="interpretation-section")
+        dcc.Markdown('''
+        Looking at the data table, a closer examination of the content within Topic 8 reveals that students are increasingly turning to the r/UniUK forum to share their mental health struggles, seek advice, and offer support to their peers (page 3 of Topic 8 shown here; see Topic Data page for more). 
+        The posts highlight the various stressors that students face, such as academic pressure, social isolation, and financial worries. 
+        However, the responses to these posts often contain words of encouragement, practical tips, and reminders to prioritize self-care and seek professional help when needed.
+        This content analysis reinforces the notion that online social media platforms like Reddit are emerging as important channels for students to connect, share their experiences, and find support outside of the traditional university mental health support systems. 
+        As Winstone et al. (2021) note, youths are increasingly relying on social media for social connectedness in the face of well-being challenges.
+        The analysis of social media discourse on r/UniUK thus provides insights into how these platforms can complement traditional mental health support systems in better understanding and supporting UK university students' well-being needs.
+        Notably, this dashboard is an exploratory tool to examine various topics through topic frequencies and sentiment trends, offering a nuanced understanding of the authentic student experience. 
+        Future research could extend this tool to investigate integrating social media insights into student policies and intervention plans to better support university life.
+    '''),
     ], className="interpretation-section"),
-    
-    html.P("As stated, this project seeks to understand what university students in UK are thinking and how do their sentiments change over time. Using mental health as a topic, we provided an example of how social media discourse could be harnessed to understand an increasingly growing part of university students' lives - social media consumption. While this dashboard serves as an exploratory visualization to understand the research question, clearly from the mental health example, there is a need for more effort to understand social media discourse to better understand our university students."),
+    html.P("Limitation",className="title"),
+      dcc.Markdown('''
+    X
+    '''),
+    html.P("Future Direction",className="title"),
+      dcc.Markdown('''
+    X
+    '''),
     html.P("References", className="title"),    
     html.Li("Gagné, T., Schoon, I., McMunn, A., & Sacker, A. (2021). Mental distress among young adults in Great Britain: long-term trends and early changes during the COVID-19 pandemic. Social Psychiatry and Psychiatric Epidemiology, 1-12.", className="reference"),
-    html.P("Winstone, L., Mars, B., Haworth, C. M., & Kidger, J. (2021). Social media use and social connectedness among adolescents in the United Kingdom: a qualitative exploration of displacement and stimulation. BMC public health, 21, 1-15.", className="reference")
+    html.Li("Winstone, L., Mars, B., Haworth, C. M., & Kidger, J. (2021). Social media use and social connectedness among adolescents in the United Kingdom: a qualitative exploration of displacement and stimulation. BMC public health, 21, 1-15.", className="reference")
 ])
 
 #################

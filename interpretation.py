@@ -3,8 +3,8 @@ import pandas as pd
 from dash import dash_table
 from dash import html
 
-def generate_topic_frequency_gif(sentiment_data, topic_max):
-    # Generate the topic frequency figure for the GIF
+def generate_topic_frequency_html(sentiment_data, topic_max):
+    # Generate the topic frequency figure
     fig = go.Figure()
     
     # Add traces for normalized frequencies with all topics
@@ -21,6 +21,13 @@ def generate_topic_frequency_gif(sentiment_data, topic_max):
     topic_freq_over_time = filtered_data.groupby(['Quarter', 'Topic_Label']).size().unstack(fill_value=0)
     topic_freq_over_time_normalized = topic_freq_over_time.div(topic_freq_over_time.sum(axis=1), axis=0) * 100
     
+    # Sort the columns (topics) based on the extracted topic number
+    sorted_columns = sorted(topic_freq_over_time.columns, key=lambda x: int(x.split(':')[0].split(' ')[1]))
+    
+    # Reorder DataFrame columns according to the sorted topics
+    topic_freq_over_time = topic_freq_over_time[sorted_columns]
+    topic_freq_over_time_normalized = topic_freq_over_time_normalized[sorted_columns]
+    
     for topic_label in topic_freq_over_time_normalized.columns:
         fig.add_trace(go.Scatter(
             x=topic_freq_over_time_normalized.index,
@@ -31,12 +38,16 @@ def generate_topic_frequency_gif(sentiment_data, topic_max):
     
     # Additional layout and styling
     fig.update_layout(
-        title="Tracking Topic Frequencies over Time",
+        title=dict(
+            text="Tracking Topic Frequencies over Time",
+            x=0.5,
+            font=dict(size=24)
+        ),
         xaxis_title="<b>Time</b>",
         yaxis_title="<b>Normalized Frequency</b>",
         legend_title="<b>Topic Label</b>",
         template="plotly_dark",
-        margin=dict(t=40, b=5, l=0, r=0),
+        margin=dict(t=60, b=5, l=0, r=0),
     )
     
     # Save the figure as an HTML file
@@ -44,8 +55,8 @@ def generate_topic_frequency_gif(sentiment_data, topic_max):
     
     return fig
 
-def generate_sentiment_analysis_gif(sentiment_data):
-    # Generate the sentiment analysis figure for the GIF
+def generate_sentiment_analysis_html(sentiment_data):
+    # Generate the sentiment analysis figure
     fig = go.Figure()
     
     # Add traces for normalized frequencies for "Topic 8: Mental, Health, Adhd, Gp"
@@ -63,23 +74,30 @@ def generate_sentiment_analysis_gif(sentiment_data):
     sentiment_counts = filtered_sentiment_counts.groupby(['Quarter', 'sentiment']).size().unstack(fill_value=0)
     sentiment_counts = sentiment_counts.div(sentiment_counts.sum(axis=1), axis=0) * 100
     
+    colors = {'negative': '#FF0000', 'neutral': '#FFFF00', 'positive': '#00FF00'}
+
     for sentiment in ['positive', 'neutral', 'negative']:
         if sentiment in sentiment_counts.columns:
-            fig.add_trace(go.Scatter(
+            fig.add_trace(go.Scatter(                
                 x=sentiment_counts.index,
                 y=sentiment_counts[sentiment],
                 mode='lines+markers',
-                name=sentiment
+                name=sentiment,
+                marker=dict(color=colors[sentiment])
             ))
     
     # Additional layout and styling
     fig.update_layout(
-        title="Tracking Sentiment over Time for Topic 8: Mental, Health, Adhd, Gp",
+        title=dict(
+            text="Tracking Sentiment over Time for Topic 8: Mental, Health, Adhd, Gp",
+            x=0.5,
+            font=dict(size=24)
+        ),
         xaxis_title='<b>Time</b>',
         yaxis_title='<b>Normalized Frequency</b>',
         legend_title='<b>Sentiment</b>',
         template="plotly_dark",
-        margin=dict(t=40, b=5, l=0, r=0)
+        margin=dict(t=60, b=5, l=0, r=0)
     )
     
     # Save the figure as an HTML file
@@ -106,24 +124,24 @@ def generate_topic_data_table(sentiment_data):
     filtered_data = filtered_data.iloc[start_index:end_index]
 
     # Rename columns for the table display
-    filtered_data = filtered_data.rename(columns={'created_utc': 'Date', 'body': 'Content'})
+    filtered_data = filtered_data.rename(columns={'created_utc': 'Date', 'body': 'Content', 'sentiment': 'Sentiment'})
 
     # Apply conditional styling based on sentiment
     styles = [
         {
-            'if': {'filter_query': '{sentiment} = "positive"'},
+            'if': {'filter_query': '{Sentiment} = "positive"'},
             'backgroundColor': '#B0DBA4',
             'color': 'black',
             'fontFamily': 'Lato, sans-serif'
         },
         {
-            'if': {'filter_query': '{sentiment} = "negative"'},
+            'if': {'filter_query': '{Sentiment} = "negative"'},
             'backgroundColor': '#FF887E',
             'color': 'black',
             'fontFamily': 'Lato, sans-serif'
         },
         {
-            'if': {'filter_query': '{sentiment} = "neutral"'},
+            'if': {'filter_query': '{Sentiment} = "neutral"'},
             'backgroundColor': '#FEE191',
             'color': 'black',
             'fontFamily': 'Lato, sans-serif'
@@ -131,7 +149,7 @@ def generate_topic_data_table(sentiment_data):
     ]
 
     # Create the table
-    desired_columns = ['Date', 'Content', 'sentiment']
+    desired_columns = ['Date', 'Content', 'Sentiment']
     table = html.Div(
         className='table-container',
         children=[
@@ -149,13 +167,16 @@ def generate_topic_data_table(sentiment_data):
                 style_cell_conditional=[
                     {'if': {'column_id': 'Date'},
                      'width': '7%',
-                     'fontSize': '16px'},
+                     'fontSize': '16px',
+                     'textAlign': 'left'},
                     {'if': {'column_id': 'Content'},
                      'whiteSpace': 'normal',
                      'textOverflow': 'ellipsis',
-                     'fontSize': '16px'},
+                     'fontSize': '16px',
+                     'textAlign': 'left'},
                     {'if': {'column_id': 'sentiment'},
-                     'width': '0.1%'}
+                     'width': '0.1%',
+                     'textAlign': 'left'}
                 ]
             )
         ]
@@ -166,19 +187,20 @@ def generate_topic_data_table(sentiment_data):
         header=dict(
             values=desired_columns,
             fill_color='black',
-            font=dict(color='white', size=12)
+            font=dict(color='white', size=12),
+            align='left'
         ),
         cells=dict(
             values=[filtered_data[col] for col in desired_columns],
             fill_color=[styles[0]['backgroundColor'], styles[1]['backgroundColor'], styles[2]['backgroundColor']],
-            font=dict(color='black', size=11)
+            font=dict(color='black', size=11),
+            align='left'
         )
     )])
     
     fig.update_layout(
-        title="Topic Data - Topic 8: Mental, Health, Adhd, Gp",
         template="plotly_white",
-        margin=dict(t=40, b=0, l=0, r=0),
+        margin=dict(t=60, b=0, l=0, r=0),
     )
 
     # Save the figure as an HTML file

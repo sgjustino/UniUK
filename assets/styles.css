@@ -286,6 +286,20 @@ li a:hover {
     color: white;
 }
 
+#sentiment-analysis-graph .gtitle {
+    font-size: 24px !important;
+    text-align: center !important;
+}
+
+.title-center {
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+    font-family: 'Lato', sans-serif;
+    margin-bottom: 20px;
+}
+
 /* Media Queries for Mobile Responsiveness */
 @media (max-width: 600px) {
     /* Adjust main title and Learn More button */
