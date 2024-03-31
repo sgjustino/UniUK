@@ -383,7 +383,7 @@ topic_data_page = html.Div([
 #################
 
 interpretation_page = html.Div([
-    html.H2("Answering the RQ: How do the perspectives of UK university students, as expressed on Reddit, evolve over time?", className="title"),        
+    html.H2("Interpretation, Limitations and Future Direction", className="title"),        
     
     html.Div([
         dcc.Graph(figure=generate_topic_frequency_html(sentiment_data, topic_max)),
