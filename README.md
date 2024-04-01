@@ -2,7 +2,7 @@
 
 This repository contains a data visualization dashboard for analyzing and visualizing data from the subreddit r/UniUK from February 2016 (the inception of Subreddit r/UniUK) to December 2023. The data has been collected through an open-source project named PushShift and includes a vast number of posts and comments that offer insights into university life in the UK.
 
-## [https://uniuk.pythonanywhere.com/](https://uniuk.pythonanywhere.com/).
+## Access the webpage: [https://uniuk.pythonanywhere.com/](https://uniuk.pythonanywhere.com/)
 
 
 ## Navigating the Dashboard
@@ -21,8 +21,8 @@ The data, spanning from February 2016 (the inception of Subreddit r/UniUK) to De
 
 To focus on the visualisation aspects, the detailed data modeling steps are not covered in this project repository. However, the modeling process are shared in the accompanying Kaggle notebook, providing a reproducible account of the data analysis. 
 
-* Link to Data Source: [https://academictorrents.com/details/56aa49f9653ba545f48df2e33679f014d2829c10](https://academictorrents.com/details/56aa49f9653ba545f48df2e33679f014d2829c10).
-* Link to Modeling Notebook: [https://www.kaggle.com/code/sgjustino/uniuk-topic-modeling-with-bertopic?scriptVersionId=168342984](https://www.kaggle.com/code/sgjustino/uniuk-topic-modeling-with-bertopic?scriptVersionId=168342984).
+* Link to Data Source: [https://academictorrents.com/details/56aa49f9653ba545f48df2e33679f014d2829c10](https://academictorrents.com/details/56aa49f9653ba545f48df2e33679f014d2829c10)
+* Link to Modeling Notebook: [https://www.kaggle.com/code/sgjustino/uniuk-topic-modeling-with-bertopic?scriptVersionId=168342984](https://www.kaggle.com/code/sgjustino/uniuk-topic-modeling-with-bertopic?scriptVersionId=168342984)
 
 ## Meta-Data for Processed Data
 
