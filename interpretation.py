@@ -8,7 +8,7 @@ def generate_topic_frequency_html(sentiment_data, topic_max):
     fig = go.Figure()
     
     # Add traces for normalized frequencies with all topics
-    filtered_data = sentiment_data[sentiment_data['Topic'].isin(range(1, topic_max + 1))]
+    filtered_data = sentiment_data[sentiment_data['Topic'].isin(range(1, topic_max))]
     
     # Ensure the index is a DatetimeIndex before converting to period
     if not isinstance(filtered_data.index, pd.DatetimeIndex):

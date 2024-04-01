@@ -4,7 +4,7 @@ import os
 import plotly.graph_objs as go
 import dash
 from dash import dcc
-from dash import html as html
+from dash import html
 from dash.dependencies import Input, Output
 from dash import dash_table
 from interpretation import generate_topic_frequency_html, generate_sentiment_analysis_html, generate_topic_data_table
@@ -46,6 +46,19 @@ sentiment_data['Topic'] -= 1
 sentiment_data['Topic_Label'] = sentiment_data['Topic_Label'].apply(
     lambda x: f"Topic {int(x.split(':')[0].split(' ')[1]) - 1}:{x.split(':')[1]}"
 )
+
+'''
+Process Topics for dropdown list usage
+'''
+
+# Create a DataFrame with unique Topic_Label and their corresponding Topic values
+topic_label_df = sentiment_data[['Topic', 'Topic_Label']].drop_duplicates()
+
+# Sort the DataFrame by Topic values
+topic_label_df = topic_label_df.sort_values('Topic')
+
+# Create the options for the dropdown
+dropdown_options = [{'label': row['Topic_Label'], 'value': row['Topic_Label']} for _, row in topic_label_df.iterrows()]
 
 #################
 # Dashboard App 
@@ -89,7 +102,7 @@ app.layout = html.Div([
             children=[
                 dcc.Tabs(
                     id="app-tabs",
-                    value="tab1",
+                    value="tab0",
                     className="custom-tabs",
                     children=[
                         dcc.Tab(
@@ -145,6 +158,7 @@ app.layout = html.Div([
 #################
 
 background_page = html.Div([
+    # Background Info and Motivation
     html.H2("Background", className="title"),    
     html.Hr(),
     dcc.Markdown('''
@@ -155,6 +169,7 @@ background_page = html.Div([
     Recognizing the rich insights that social media conversations offer, we thus turn our attention to the research question:
     '''),
     html.Hr(),
+    # Explanation on how we will address the RQ
     html.H2("How do the perspectives of UK university students, as expressed on Reddit, evolve over time?", className="title"), 
     html.Hr(),
     dcc.Markdown('''
@@ -165,6 +180,7 @@ background_page = html.Div([
     '''),
     html.Hr(),
 
+    # How to navigate the dashboard
     html.H2("Navigating the Dashboard", className="title"),
     html.Hr(),
     dcc.Markdown('''
@@ -172,12 +188,13 @@ background_page = html.Div([
     '''),
     html.Li("Background Page: Introduces the study motivation and research question, guides users on exploring the dashboard findings and provide additional details like data source, preprocessing steps and references."),
     html.Li("Topic Frequency Page: Allows users to view the frequency of selected topics over time, either as absolute counts or normalized percentages, to identify popular topics and trends over time."),
-    html.Li("Sentiment Analysis Page: Enables users to analyze sentiment trends for a specific topic over time, using absolute or normalized frequency views, to understand the emotional tone of discussions."),
+    html.Li("Sentiment Analysis Page: Enables users to analyze sentiment trends for a specific topic over time, using absolute counts or normalized percentages views, to understand the emotional tone of discussions."),
     html.Li("Topic Data Page: Provides a table view of the individual posts for a selected topic and year range, with sentiment indicated by cell color, allowing users to explore specific discussions."),
     html.Li("Interpretation Page: Demonstrates how to use the dashboard to examine the research question through an example analysis of a specific topic, showcasing insights and conclusions."),
     html.Li(html.A("Find out more at the github repository", href="https://github.com/sgjustino/UniUK", target="_blank")),
     html.Hr(),
 
+    # Data Source and Pre-processing steps taken
     html.H2("Data Source and Preprocessing", className="title"),
     html.Hr(),
     dcc.Markdown('''
@@ -195,8 +212,10 @@ background_page = html.Div([
     html.Li(html.A("Link to Modeling Notebook", href="https://www.kaggle.com/code/sgjustino/uniuk-topic-modeling-with-bertopic?scriptVersionId=168342984", target="_blank")),
     html.Hr(),
 
+    # Meta-data or Codebook
     html.H2("Meta-Data for Processed Data", className="title"),
     html.Hr(),
+    # Data Table for the Processed data used in Visualisation
     html.Div([
         dash_table.DataTable(
             data=sentiment_data.head().to_dict('records'),
@@ -230,6 +249,7 @@ background_page = html.Div([
         ])
     ]),
     html.Hr(),
+    # Libraries, Inspirations and Tools used
     html.H2("Built With", className="title"),
     html.Hr(),
     html.Ul([
@@ -242,6 +262,7 @@ background_page = html.Div([
         html.Li("ChatGPT4 and Claude 3 Opus were utilised for code development and bug fixing.")
     ]),
     html.Hr(),
+    # References
     html.H2("References", className="title"),
     html.Hr(),
     html.Ul([
@@ -259,14 +280,14 @@ background_page = html.Div([
 # Topic Frequency Page
 #################
 
-index_page = html.Div([
+topic_frequency_page = html.Div([
     # Page Title
     html.H1("Tracking Topic Frequencies over Time", className="title"),
     html.Hr(),
     html.P([
     "(1) Select Range of Topics.", 
     html.Br(),
-    "(2) Select Type of Frequency: Absolute or Normalized (% frequency across selected topics)."
+    "(2) Select Type of Frequency: Absolute Counts or Normalized Percentages (% of frequency for the topic out of all selected topics)."
     ], style={
         'color': '#efefef',  
         'fontWeight': 'bold',  
@@ -287,8 +308,8 @@ index_page = html.Div([
         id='frequency-tabs',
         value='absolute',
         children=[
-            dcc.Tab(label='Absolute Frequency', value='absolute'),
-            dcc.Tab(label='Normalized Frequency', value='normalized')
+            dcc.Tab(label='Absolute Counts', value='absolute'),
+            dcc.Tab(label='Normalized Percentages', value='normalized')
         ]
     ),
     # Page Visualisation
@@ -297,19 +318,6 @@ index_page = html.Div([
         children=[dcc.Graph(id='topic-frequency-graph')]
     )
 ])
-
-'''
-Process Topics for dropdown list usage
-'''
-
-# Create a DataFrame with unique Topic_Label and their corresponding Topic values
-topic_label_df = sentiment_data[['Topic', 'Topic_Label']].drop_duplicates()
-
-# Sort the DataFrame by Topic values
-topic_label_df = topic_label_df.sort_values('Topic')
-
-# Create the options for the dropdown
-dropdown_options = [{'label': row['Topic_Label'], 'value': row['Topic_Label']} for _, row in topic_label_df.iterrows()]
 
 #################
 # Sentiment Analysis Page
@@ -322,7 +330,7 @@ sentiment_analysis_page = html.Div([
     html.P([
     "(1) Select Topic of Interest.", 
     html.Br(),
-    "(2) Select Type of Frequency: Absolute or Normalized (% frequency across selected topics)."
+    "(2) Select Type of Frequency: Absolute Counts or Normalized Percentages (% of frequency for the topic out of all selected topics)."
     ], style={
         'color': '#efefef',  
         'fontWeight': 'bold',  
@@ -340,8 +348,8 @@ sentiment_analysis_page = html.Div([
         id='sentiment-frequency-tabs',
         value='absolute',
         children=[
-            dcc.Tab(label='Absolute Frequency', value='absolute'),
-            dcc.Tab(label='Normalized Frequency', value='normalized')
+            dcc.Tab(label='Absolute Counts', value='absolute'),
+            dcc.Tab(label='Normalized Percentages', value='normalized')
         ]
     ),
     # Page Visualisation
@@ -408,12 +416,14 @@ topic_data_page = html.Div([
 interpretation_page = html.Div([
     html.H2("Interpretation, Limitations and Future Direction", className="title"),        
     html.Hr(),
+    # Sample from Topic Frequency Visualisation
     html.Div([
         dcc.Graph(figure=generate_topic_frequency_html(sentiment_data, topic_max)),
         html.Hr(),
+    # Explanation 1
         dcc.Markdown('''
     The topic frequency graph provides an overview of the most prevalent themes discussed by UK university students on Reddit r/UniUK. 
-    Notably, while absolute frequency shows an increasing trend for all topics as the subreddit grows in popularity (see Topic Frequency page), normalizing the data allows us to identify the relative prominence of each topic over time. 
+    Notably, while absolute count shows an increasing trend for all topics as the subreddit grows in popularity (see Topic Frequency page), normalizing the data allows us to identify the relative prominence of each topic over time. 
     Among the top topics, we find a mix of academic concerns (e.g., accommodation, university applications), social aspects (e.g., making friends, societies), and personal well-being (e.g., mental health, finance).
     First, the prominence of topics such as job, university choice and application, accommodation and finance highlights the practical challenges that students face in their university journey.
     Likely, students view such social media platforms as an avenue of seeking help and advice from other UK university students who have experienced similar concerns.
@@ -426,10 +436,11 @@ interpretation_page = html.Div([
     ''')
     ,]),
     html.Hr(),
-    
+    # Sample from Sentiment Analysis Visualisation
     html.Div([
         dcc.Graph(figure=generate_sentiment_analysis_html(sentiment_data)),
         html.Hr(),
+    # Explanation 2
         dcc.Markdown('''
         Zooming in on the sentiment analysis graph for Topic 8 (mental health, general health, and disability), we observe an interesting trend. 
         While the absolute number of posts related to this topic is increasing (see Sentiment Analysis page), the proportion of positive, neutral, and negative sentiments remains relatively stable over time. 
@@ -439,12 +450,14 @@ interpretation_page = html.Div([
     '''),
     ]),
     html.Hr(),
+    # Sample from Topic Data Table
     html.Div([
         html.P("Topic Data - Topic 8: Mental, Health, Adhd, Gp", className="title-center"), 
         html.Div([
             generate_topic_data_table(sentiment_data)
         ], style={'height': '600px', 'overflow': 'auto'}),
         html.Hr(),
+    # Explanation 3
         dcc.Markdown('''
         Looking at the data table, a closer examination of the content within Topic 8 reveals that students are increasingly turning to the r/UniUK forum to share their mental health struggles, seek advice, and offer support to their peers (page 3 of Topic 8 shown here; see Topic Data page for more). 
         The posts highlight the various stressors that students face, such as academic pressure, social isolation, and financial worries. 
@@ -458,6 +471,7 @@ interpretation_page = html.Div([
     ]),
     html.Hr(),
     
+    # Limitations and Future Direction
     html.P("Limitations and Future Direction",className="title"),
     html.Hr(),
     dcc.Markdown('''
@@ -471,19 +485,27 @@ interpretation_page = html.Div([
     In addition to improving classification accuracy, topic representation could be enhanced using Large Language Models (LLMs) to re-examine the identified samples within each topic and generate more representative labels (Grootendorst, 2023). 
     For instance, Topic 2 in the current study, which classifies different cities or university names like City, University, Manchester, and Leeds, could be more accurately labeled as "City or University Choices" using LLMs. 
     This approach would provide a more comprehensive understanding of the overarching themes within each topic.
-    Looking ahead, the integration of AI-powered data visualizations opens up the possibilities in the exploration and interpretation of the data. 
-    Leveraging LLMs like the ChatGPT API, researchers could create open-ended, prompt-based visualizations that are generated on-the-fly based on user prompts (Avra, 2023). 
-    This approach would enable users to ask more targeted, exploratory questions and uncover novel insights tailored to their specific interests.
-    '''),  
-    dcc.Markdown('''
-    While this study provides valuable insights into the topics and sentiments expressed in the r/UniUK subreddit, clearly, there is much room for improvement in terms of classification accuracy, topic representation, and data visualization.
-    By incorporating domain-specific training data, fine-tuning models, and integrating AI-powered data visualizations, future research can build upon the findings of this study and provide an even more comprehensive understanding of the discussions and experiences shared by university students on Reddit.
-    '''),          
+    Besides that, LLMs also opens up the possibilities in the exploration and interpretation of the data with the integration of AI-powered data visualizations. 
+    Leveraging LLMs like the ChatGPT API, researchers could create open-ended, prompt-based visualizations that are generated on-the-fly based on user prompts (Biswas, 2023). 
+    This approach would enable users to ask more targeted, exploratory questions, generate custom visualisations and uncover novel insights tailored to their specific interests.
+    '''),     
+    # Example of AI-powered Visualisation  
+    html.Figure([
+        html.Img(src='/assets/future_direction_gif.gif', style={'width': '70%', 'height': '70%'}),
+        html.Figcaption("Example of AI-powered visualisation from Biswas (2023).", style={'color': 'lightgrey', 'fontSize': 'small', 'textAlign': 'left'})
+    ]),
     html.Hr(),
+    
+    # References
     html.P("References", className="title"),
     html.Hr(),    
-    html.Li("ADD", className="reference"),
+    html.Li("Al-Natour, S., & Turetken, O. (2020). A comparative assessment of sentiment analysis and star ratings for consumer reviews. International Journal of Information Management, 54, 102132.", className="reference"),
+    html.Li("Biswas, A. (2023, October 17). AI-powered data visualizations: Introducing an app to generate charts using only a single prompt and OpenAI large language models. Databutton. https://medium.com/databutton/ai-powered-data-visualization-134e89d82d99", className="reference"),
     html.Li("Gagné, T., Schoon, I., McMunn, A., & Sacker, A. (2021). Mental distress among young adults in Great Britain: long-term trends and early changes during the COVID-19 pandemic. Social Psychiatry and Psychiatric Epidemiology, 1-12.", className="reference"),
+    html.Li("Grootendorst, M. (2023, August 22). Topic modeling with Llama 2: Create easily interpretable topics with Large Language Models. Towards Data Science. https://towardsdatascience.com/topic-modeling-with-llama-2-85177d01e174", className="reference"),
+    html.Li("Guo, Y., Ge, Y., Yang, Y. C., Al-Garadi, M. A., & Sarker, A. (2022). Comparison of pretraining models and strategies for health-related social media text classification. In Healthcare (Vol. 10, No. 8, p. 1478). MDPI.", className="reference"),
+    html.Li("Samaras, L., García-Barriocanal, E., & Sicilia, M. A. (2023). Sentiment analysis of COVID-19 cases in Greece using Twitter data. Expert Systems with Applications, 230, 120577.", className="reference"),
+    html.Li("Souza, F. D., & Filho, J. B. D. O. E. S. (2022). BERT for sentiment analysis: pre-trained and fine-tuned alternatives. In International Conference on Computational Processing of the Portuguese Language (pp. 209-218). Cham: Springer International Publishing.", className="reference"),
     html.Li("Winstone, L., Mars, B., Haworth, C. M., & Kidger, J. (2021). Social media use and social connectedness among adolescents in the United Kingdom: a qualitative exploration of displacement and stimulation. BMC public health, 21, 1-15.", className="reference")
 ])
 
@@ -497,6 +519,8 @@ interpretation_page = html.Div([
 def display_page(tab):
     if tab == 'tab0':
         return background_page
+    elif tab == 'tab1':
+        return topic_frequency_page
     elif tab == 'tab2':
         return sentiment_analysis_page
     elif tab == 'tab3':
@@ -504,7 +528,7 @@ def display_page(tab):
     elif tab == 'tab4':
         return interpretation_page
     else:
-        return index_page
+        return background_page
 
 # Callback for topic frequency graph
 @app.callback(
@@ -802,5 +826,6 @@ def update_topic_data(selected_topic_label, year_range):
 
     return f"Topic Data - {topic_label}", table
 
+# Running the app
 if __name__ == '__main__':
     app.run_server(debug=False)
