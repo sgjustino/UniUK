@@ -146,6 +146,7 @@ app.layout = html.Div([
 
 background_page = html.Div([
     html.H2("Background", className="title"),    
+    html.Hr(),
     dcc.Markdown('''
     Traditional research studies, often relying on methodologies such as surveys, interviews, or focus groups, are typically constrained by the scale of recruitment and tend to capture student perspectives in more structured, formal environments (e.g. Briggs, Clark & Hall, 2012; Reddy, Menon & Thattil, 2018).
     In contrast, social media platforms are rich with spontaneous, unfiltered discussions about university life, offering a wider and more authentic range of student viewpoints.
@@ -153,15 +154,19 @@ background_page = html.Div([
     Besides that, this approach provides access to a larger volume of data points, capturing a diverse array of student voices and experiences.
     Recognizing the rich insights that social media conversations offer, we thus turn our attention to the research question:
     '''),
+    html.Hr(),
     html.H2("How do the perspectives of UK university students, as expressed on Reddit, evolve over time?", className="title"), 
+    html.Hr(),
     dcc.Markdown('''
     To address this, we examined the social media data from the subreddit r/UniUK, a hub for candid UK university student discussions. 
     Our analysis of the numerous posts and comments within this community has led to the identification of key themes and the sentiment trends associated with them over time. 
     Users can navigate the interactive dashboard to explore specific areas of interest, thereby gaining a nuanced understanding of how the sentiments of UK university students on Reddit have evolve over time. 
     This tool not only aids in answering our research question but also provides a foundation for further research and informed decision-making within the realm of higher education.
     '''),
-    
+    html.Hr(),
+
     html.H2("Navigating the Dashboard", className="title"),
+    html.Hr(),
     dcc.Markdown('''
     The dashboard is built using Dash (Plotly) with the following components:
     '''),
@@ -171,8 +176,10 @@ background_page = html.Div([
     html.Li("Topic Data Page: Provides a table view of the individual posts for a selected topic and year range, with sentiment indicated by cell color, allowing users to explore specific discussions."),
     html.Li("Interpretation Page: Demonstrates how to use the dashboard to examine the research question through an example analysis of a specific topic, showcasing insights and conclusions."),
     html.Li(html.A("Find out more at the github repository", href="https://github.com/sgjustino/UniUK", target="_blank")),
+    html.Hr(),
 
     html.H2("Data Source and Preprocessing", className="title"),
+    html.Hr(),
     dcc.Markdown('''
     The data, spanning from February 2016 (the inception of Subreddit r/UniUK) to December 2023, was obtained from academic torrents hosted online and collected by an open-source project called Pushshift. 
     To prepare the data for analysis and answer the research question, several pre-processing steps and modeling were undertaken. 
@@ -186,15 +193,17 @@ background_page = html.Div([
     '''),
     html.Li(html.A("Link to Data Source", href="https://academictorrents.com/details/56aa49f9653ba545f48df2e33679f014d2829c10", target="_blank")),
     html.Li(html.A("Link to Modeling Notebook", href="https://www.kaggle.com/code/sgjustino/uniuk-topic-modeling-with-bertopic?scriptVersionId=168342984", target="_blank")),
-    
+    html.Hr(),
+
     html.H2("Meta-Data for Processed Data", className="title"),
+    html.Hr(),
     html.Div([
         dash_table.DataTable(
             data=sentiment_data.head().to_dict('records'),
             columns=[{"name": i, "id": i} for i in sentiment_data.columns],
             style_table={'overflowX': 'auto'},
             style_cell={
-                'backgroundColor': 'black',
+                'backgroundColor': '#26282A',
                 'color': 'white',
                 'fontWeight': 'bold',
                 'textAlign': 'left',
@@ -202,6 +211,13 @@ background_page = html.Div([
                 'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
                 'overflow': 'hidden',
                 'textOverflow': 'ellipsis',
+            },
+            style_header={
+                'backgroundColor': 'black',
+                'color': 'white',
+                'fontWeight': 'bold',
+                'textAlign': 'left',
+                'fontFamily': 'Lato, sans-serif',
             }
         ),
         html.Ul([
@@ -213,7 +229,9 @@ background_page = html.Div([
             html.Li("Topic_Label: The descriptive label assigned to each topic, derived from the four most representative words identified through a class-based Term Frequency-Inverse Document Frequency analysis of the topic's content (Grootendorst, 2022).")
         ])
     ]),
+    html.Hr(),
     html.H2("Built With", className="title"),
+    html.Hr(),
     html.Ul([
         html.Li(html.A("Pre-processing with NLTK", href="https://github.com/nltk/nltk", target="_blank")),
         html.Li(html.A("Sentiment classification with VaderSentiment", href="https://github.com/cjhutto/vaderSentiment", target="_blank")),
@@ -223,8 +241,9 @@ background_page = html.Div([
         html.Li(html.A("Inspiration for tabs from Dash Manufacture SPC Dashboard", href="https://github.com/dkrizman/dash-manufacture-spc-dashboard", target="_blank")),
         html.Li("ChatGPT4 and Claude 3 Opus were utilised for code development and bug fixing.")
     ]),
-
+    html.Hr(),
     html.H2("References", className="title"),
+    html.Hr(),
     html.Ul([
         html.Li("Briggs, A. R., Clark, J., & Hall, I. (2012). Building bridges: understanding student transition to university. Quality in higher education, 18(1), 3-21."),
         html.Li("Grootendorst, M. (2022). BERTopic: Neural topic modeling with a class-based TF-IDF procedure. arXiv preprint arXiv:2203.05794."),
@@ -232,7 +251,8 @@ background_page = html.Div([
         html.Li("Baumgartner, J., Zannettou, S., Keegan, B., Squire, M., & Blackburn, J. (2020, May). The pushshift reddit dataset. In Proceedings of the international AAAI conference on web and social media (Vol. 14, pp. 830-839)."),
         html.Li("Reddy, K. J., Menon, K. R., & Thattil, A. (2018). Academic stress and its sources among university students. Biomedical and pharmacology journal, 11(1), 531-537."),
         html.Li("Solatorio, A. V. (2024). GISTEmbed: Guided In-sample Selection of Training Negatives for Text Embedding Fine-tuning. arXiv preprint arXiv:2402.16829.")
-    ])
+    ]),
+    html.Hr()
 ])
 
 #################
@@ -242,6 +262,7 @@ background_page = html.Div([
 index_page = html.Div([
     # Page Title
     html.H1("Tracking Topic Frequencies over Time", className="title"),
+    html.Hr(),
     html.P([
     "(1) Select Range of Topics.", 
     html.Br(),
@@ -297,6 +318,7 @@ dropdown_options = [{'label': row['Topic_Label'], 'value': row['Topic_Label']} f
 sentiment_analysis_page = html.Div([
     # Page Title
     html.H1(id='sentiment-analysis-title', className="title"),
+    html.Hr(),
     html.P([
     "(1) Select Topic of Interest.", 
     html.Br(),
@@ -335,6 +357,7 @@ sentiment_analysis_page = html.Div([
 topic_data_page = html.Div([
     # Page Title
     html.H1(id='topic-data-title', className="title"),
+    html.Hr(),
     html.P([
     "(1) Select Topic of Interest.", 
     html.Br(),
@@ -384,40 +407,44 @@ topic_data_page = html.Div([
 
 interpretation_page = html.Div([
     html.H2("Interpretation, Limitations and Future Direction", className="title"),        
-    
+    html.Hr(),
     html.Div([
         dcc.Graph(figure=generate_topic_frequency_html(sentiment_data, topic_max)),
+        html.Hr(),
         dcc.Markdown('''
-    The topic frequency graph provides an overview of the most prevalent themes discussed by UK university students on Reddit. 
-    While absolute frequency shows an increasing trend for all topics as the subreddit grows in popularity (not shown above; see Topic Frequency page), normalizing the data allows us to identify the relative prominence of each topic over time. Among the top topics, we find a mix of academic concerns (e.g., accommodation, university applications), social aspects (e.g., making friends, societies), and personal well-being (e.g., mental health, finance).
+    The topic frequency graph provides an overview of the most prevalent themes discussed by UK university students on Reddit r/UniUK. 
+    Notably, while absolute frequency shows an increasing trend for all topics as the subreddit grows in popularity (see Topic Frequency page), normalizing the data allows us to identify the relative prominence of each topic over time. 
+    Among the top topics, we find a mix of academic concerns (e.g., accommodation, university applications), social aspects (e.g., making friends, societies), and personal well-being (e.g., mental health, finance).
     First, the prominence of topics such as job, university choice and application, accommodation and finance highlights the practical challenges that students face in their university journey.
     Likely, students view such social media platforms as an avenue of seeking help and advice from other UK university students who have experienced similar concerns.
     These discussions not only provide valuable peer-to-peer support but also offer insights into the common struggles and decision-making processes of students.
     '''),
     dcc.Markdown('''
-    Notably, topics related to mental health, general health and disabilities (Topic 8) also consistently rank among the most frequently discussed issues. 
-    This observation aligns with the growing concern about student mental health in higher education (Winstone et al., 2021). 
+    Interestingly, discussions related to mental health, general health and disabilities (Topic 8) also consistently rank among the most frequently discussed issues. 
+    This observation aligns with the growing concern of student mental health in higher education (Gagné et al., 2021). 
     To further understand how these data can help us comprehend the experiences and needs of UK university students, we will delve deeper into the mental health topic as a specific area of interest in the subsequent analysis.
     ''')
     ,]),
+    html.Hr(),
     
     html.Div([
         dcc.Graph(figure=generate_sentiment_analysis_html(sentiment_data)),
+        html.Hr(),
         dcc.Markdown('''
         Zooming in on the sentiment analysis graph for Topic 8 (mental health, general health, and disability), we observe an interesting trend. 
-        While the absolute number of posts related to this topic is increasing (not shown above; see Sentiment Analysis page), the proportion of positive, neutral, and negative sentiments remains relatively stable over time. 
+        While the absolute number of posts related to this topic is increasing (see Sentiment Analysis page), the proportion of positive, neutral, and negative sentiments remains relatively stable over time. 
         Notably, positive posts consistently outnumber negative ones by a ratio of nearly 2:1.
         This finding suggests that while mental health concerns are indeed prevalent among UK university students, as corroborated by existing research (Gagné et al., 2021), the discourse on Reddit appears to have a more supportive and encouraging tone. 
         The higher proportion of positive posts could indicate that students are finding solace, advice, and a sense of community through these online discussions.
     '''),
     ]),
-    
+    html.Hr(),
     html.Div([
         html.P("Topic Data - Topic 8: Mental, Health, Adhd, Gp", className="title-center"), 
         html.Div([
             generate_topic_data_table(sentiment_data)
         ], style={'height': '600px', 'overflow': 'auto'}),
-        
+        html.Hr(),
         dcc.Markdown('''
         Looking at the data table, a closer examination of the content within Topic 8 reveals that students are increasingly turning to the r/UniUK forum to share their mental health struggles, seek advice, and offer support to their peers (page 3 of Topic 8 shown here; see Topic Data page for more). 
         The posts highlight the various stressors that students face, such as academic pressure, social isolation, and financial worries. 
@@ -429,17 +456,33 @@ interpretation_page = html.Div([
         Future research could extend this tool to investigate integrating social media insights into student policies and intervention plans to better support university life.
     ''')
     ]),
-
+    html.Hr(),
     
-    html.P("Limitation",className="title"),
-      dcc.Markdown('''
-    X
+    html.P("Limitations and Future Direction",className="title"),
+    html.Hr(),
+    dcc.Markdown('''
+    This study employed pre-trained transformer-based models with BerTopic for topic classification, which may have limitations in capturing complex nuances between topics (Souza & Filho, 2022). 
+    For example, Topic 9 - Math, Physic, Level, Alevel - may actually belong to 2 separate categories of (1) type of subjects and (2) pre-university education.
+    To enhance the accuracy of topic classification, future research could consider pre-training models with domain-specific data, such as trained twitter datasets relating to students, to better capture the intricacies of these social media data (Guo et al., 2022). 
+    Similarly, while lexicon-based and rule-based techniques like VADER are useful for sentiment analysis without training data, they may struggle with sentences containing sarcasm or irony, which fall outside of the predefined rules (Al-Natour & Turetken, 2020; Samaras, García-Barriocanal & Sicilia, 2023). 
+    To address this limitation, future studies could explore fine-tuning models using Reddit-specific training data to improve sentiment classification accuracy.
     '''),
-    html.P("Future Direction",className="title"),
-      dcc.Markdown('''
-    X
-    '''),
-    html.P("References", className="title"),    
+    dcc.Markdown('''
+    In addition to improving classification accuracy, topic representation could be enhanced using Large Language Models (LLMs) to re-examine the identified samples within each topic and generate more representative labels (Grootendorst, 2023). 
+    For instance, Topic 2 in the current study, which classifies different cities or university names like City, University, Manchester, and Leeds, could be more accurately labeled as "City or University Choices" using LLMs. 
+    This approach would provide a more comprehensive understanding of the overarching themes within each topic.
+    Looking ahead, the integration of AI-powered data visualizations opens up the possibilities in the exploration and interpretation of the data. 
+    Leveraging LLMs like the ChatGPT API, researchers could create open-ended, prompt-based visualizations that are generated on-the-fly based on user prompts (Avra, 2023). 
+    This approach would enable users to ask more targeted, exploratory questions and uncover novel insights tailored to their specific interests.
+    '''),  
+    dcc.Markdown('''
+    While this study provides valuable insights into the topics and sentiments expressed in the r/UniUK subreddit, clearly, there is much room for improvement in terms of classification accuracy, topic representation, and data visualization.
+    By incorporating domain-specific training data, fine-tuning models, and integrating AI-powered data visualizations, future research can build upon the findings of this study and provide an even more comprehensive understanding of the discussions and experiences shared by university students on Reddit.
+    '''),          
+    html.Hr(),
+    html.P("References", className="title"),
+    html.Hr(),    
+    html.Li("ADD", className="reference"),
     html.Li("Gagné, T., Schoon, I., McMunn, A., & Sacker, A. (2021). Mental distress among young adults in Great Britain: long-term trends and early changes during the COVID-19 pandemic. Social Psychiatry and Psychiatric Epidemiology, 1-12.", className="reference"),
     html.Li("Winstone, L., Mars, B., Haworth, C. M., & Kidger, J. (2021). Social media use and social connectedness among adolescents in the United Kingdom: a qualitative exploration of displacement and stimulation. BMC public health, 21, 1-15.", className="reference")
 ])
