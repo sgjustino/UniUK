@@ -490,7 +490,7 @@ interpretation_page = html.Div([
     '''),     
     # Example of AI-powered Visualisation  
     html.Figure([
-        html.Img(src='/assets/future_direction_gif.gif', style={'width': '70%', 'height': '70%'}),
+        html.Img(src='/assets/future_direction.gif', style={'width': '70%', 'height': '70%'}),
         html.Figcaption("Example of AI-powered visualisation from Biswas (2023).", style={'color': 'lightgrey', 'fontSize': 'small', 'textAlign': 'left'})
     ]),
     html.Hr(),
