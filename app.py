@@ -601,19 +601,8 @@ def update_figure(selected_range, frequency_type):
         xaxis_title="<b>Time</b>",
         yaxis_title="<b>Frequency</b>",
         legend_title="<b>Topic Label</b>",
-        legend=dict(
-            font=dict(size=12),
-            itemsizing='constant',
-            itemwidth=30,
-            traceorder='normal',
-            orientation='h',
-            yanchor='top',
-            y=-0.2,
-            xanchor='left',
-            x=0
-        ),
         template="plotly_dark",
-        margin=dict(t=2, b=5, l=0, r=0),
+        margin=dict(t=30, b=55, l=0, r=0),
     )
 
     return fig
@@ -718,7 +707,7 @@ def update_sentiment_analysis_graph(selected_topic_label, frequency_type):
         legend_title='<b>Sentiment</b>',
         legend=dict(y=0.5,font=dict(size=12)),
         template="plotly_dark",
-        margin=dict(t=2, b=5, l=0, r=0)
+        margin=dict(t=30, b=55, l=0, r=0)
     )
     
     # 1st output for Title, 2nd for Figure

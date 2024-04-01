@@ -47,7 +47,7 @@ def generate_topic_frequency_html(sentiment_data, topic_max):
         yaxis_title="<b>Normalized Frequency</b>",
         legend_title="<b>Topic Label</b>",
         template="plotly_dark",
-        margin=dict(t=60, b=5, l=0, r=0),
+        margin=dict(t=80, b=80, l=0, r=0),
     )
     
     # Save the figure as an HTML file
@@ -97,7 +97,7 @@ def generate_sentiment_analysis_html(sentiment_data):
         yaxis_title='<b>Normalized Frequency</b>',
         legend_title='<b>Sentiment</b>',
         template="plotly_dark",
-        margin=dict(t=60, b=5, l=0, r=0)
+        margin=dict(t=80, b=80, l=0, r=0)
     )
     
     # Save the figure as an HTML file
@@ -200,7 +200,7 @@ def generate_topic_data_table(sentiment_data):
     
     fig.update_layout(
         template="plotly_white",
-        margin=dict(t=60, b=0, l=0, r=0),
+        margin=dict(t=0, b=0, l=0, r=0),
     )
 
     # Save the figure as an HTML file
