@@ -15,7 +15,7 @@ def test_data_preprocessing():
     assert sentiment_data["created_utc"].dtype == "datetime64[ns]"
 
     # Test if the topic numbers are updated correctly (Topic 99 to Topic 75, Topic 1 to Topic 75, and decrementing all topic numbers by 1)
-    assert sentiment_data["Topic"].max() == 74  # Assuming the maximum topic number after preprocessing is 74
+    assert sentiment_data["Topic"].max() == 74  # Maximum topic number after preprocessing is 74
     assert "Topic 74: Outliers" in sentiment_data["Topic_Label"].unique()
 
 # Test the dropdown options generation to verify the options are generated correctly based on unique topic labels and sorted based on topic numbers
