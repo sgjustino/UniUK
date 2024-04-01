@@ -21,8 +21,8 @@ The data, spanning from February 2016 (the inception of Subreddit r/UniUK) to De
 
 To focus on the visualisation aspects, the detailed data modeling steps are not covered in this project repository. However, the modeling process are shared in the accompanying Kaggle notebook, providing a reproducible account of the data analysis. 
 
-* Link to Data Source: [https://academictorrents.com/details/56aa49f9653ba545f48df2e33679f014d2829c10](https://academictorrents.com/details/56aa49f9653ba545f48df2e33679f014d2829c10)
-* Link to Modeling Notebook: [https://www.kaggle.com/code/sgjustino/uniuk-topic-modeling-with-bertopic?scriptVersionId=168342984](https://www.kaggle.com/code/sgjustino/uniuk-topic-modeling-with-bertopic?scriptVersionId=168342984)
+- [Link to Data Source](https://academictorrents.com/details/56aa49f9653ba545f48df2e33679f014d2829c10)
+- [Link to Modeling Notebook](https://www.kaggle.com/code/sgjustino/uniuk-topic-modeling-with-bertopic?scriptVersionId=168342984)
 
 ## Meta-Data for Processed Data
 
@@ -85,12 +85,12 @@ The `app.py` script contains the following main components:
 
 ## Built With
 
-- Pre-processing with NLTK: [https://github.com/nltk/nltk](https://github.com/nltk/nltk)
-- Topic Modeling with BERTopic: [https://github.com/MaartenGr/BERTopic](https://github.com/MaartenGr/BERTopic)
-- Sentiment Classification with VADER: [https://github.com/cjhutto/vaderSentiment](https://github.com/cjhutto/vaderSentiment)
-- Dashboard Development with Dash (Plotly): [https://github.com/plotly/dash](https://github.com/plotly/dash)
-- Inspiration for range sliders from Dash Opioid Epidemic Demo: [https://github.com/plotly/dash-opioid-epidemic-demo](https://github.com/plotly/dash-opioid-epidemic-demo)
-- Inspiration for tabs from Dash Manufacture SPC Dashboard: [https://github.com/dkrizman/dash-manufacture-spc-dashboard](https://github.com/dkrizman/dash-manufacture-spc-dashboard)
+- [Pre-processing with NLTK](https://github.com/nltk/nltk)
+- [Topic Modeling with BERTopic](https://github.com/MaartenGr/BERTopic)
+- [Sentiment Classification with VADER](https://github.com/cjhutto/vaderSentiment)
+- [Dashboard Development with Dash (Plotly)](https://github.com/plotly/dash)
+- [Inspiration for range sliders from Dash Opioid Epidemic Demo](https://github.com/plotly/dash-opioid-epidemic-demo)
+- [Inspiration for tabs from Dash Manufacture SPC Dashboard](https://github.com/dkrizman/dash-manufacture-spc-dashboard)
 - ChatGPT4 and Claude 3 Opus were utilised for code development and bug fixing.
 
 ## References
