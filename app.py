@@ -3,10 +3,8 @@ import pandas as pd
 import os
 import plotly.graph_objs as go
 import dash
-from dash import dcc
-from dash import html
+from dash import dcc, html, dash_table
 from dash.dependencies import Input, Output
-from dash import dash_table
 from interpretation import generate_topic_frequency_html, generate_sentiment_analysis_html, generate_topic_data_table
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
