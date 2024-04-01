@@ -35,6 +35,7 @@ sentiment_data['created_utc'] = pd.to_datetime(sentiment_data['created_utc'])
 # Update Topic and Topic_Label for rows with Topic 99 to Topic 75
 # Shift Topic 99 down to prevent range break
 # Merge Topic 1 to outliers as Topic 1 (Thank, Thanks, Comment, Post) is not useful
+# Common for BerTopic to have the large topic cluster as additional outliers)
 sentiment_data.loc[sentiment_data['Topic'] == 99, 'Topic'] = 75
 sentiment_data.loc[sentiment_data['Topic'] == 1, 'Topic'] = 75
 sentiment_data.loc[sentiment_data['Topic'] == 75, 'Topic_Label'] = 'Topic 75: Outliers'
