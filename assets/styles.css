@@ -8,7 +8,7 @@
     padding: 1px 5px; 
     margin-top: -25px;
     margin-bottom: 0px;
-    font-size: 24px;
+    font-size: 22px;
     font-family: 'Lato', sans-serif;
     display: flex;
     justify-content: space-between;
@@ -23,21 +23,6 @@
 .main-title p {
     margin-top: 0px;
     margin-bottom: 10px;
-}
-
-.main-title .button-primary {
-    margin-top: 10px;
-    margin-left: 20px;
-    background-color: black; 
-    color: #95969A; 
-    border: 2px solid #95969A;
-    font-size: 24px;
-    padding: 11px 10px; 
-}
-
-.main-title .button-primary:hover {
-    color: #6bc7b6; 
-    border-color: white;
 }
 
 /* Global Styles
@@ -72,12 +57,16 @@ hr {
     margin: 20px 0; 
 }
 
-/* Tabs
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-#tabs {
-    width: 100%;
+/* Instructions */
+.instructions {
+    color: #efefef;
+    font-weight: bold;
+    font-size: 14px;
+    margin-top: -5px;
 }
 
+/* Tabs
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
 .custom-tabs {
     background-color: #1E2130;
     text-transform: uppercase;
@@ -131,22 +120,6 @@ hr {
     font-family: 'Lato', sans-serif; 
 }
 
-.Select-menu-outer {
-    background-color: #white;
-    color: black;
-    border: none;
-}
-
-.Select-option {
-    background-color: #white;
-    color: black;
-}
-
-.Select-option:hover {
-    background-color: #white;
-    color: white;
-}
-
 /* Range Slider
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 .rc-slider-track {
@@ -164,59 +137,6 @@ hr {
 .rc-slider-handle-dragging.rc-slider-handle-dragging.rc-slider-handle-dragging {
     border-color: #6bc7b6;
     box-shadow: 0 0 0 5px #6bc7b6;
-}
-
-/* Topic Frequency Analysis
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-#topic-frequency-graph {
-    background-color: #212121;
-}
-
-/* Sentiment Shift Analysis
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-#sentiment-analysis-graph {
-    background-color: #212121;
-}
-
-/* Topic Data
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-#topic-data-table .dash-table-container {
-    font-size: 16px;
-    font-family: 'Lato', sans-serif; 
-    height: 600px;
-    overflow-y: auto;
-}
-
-#topic-data-table .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table {
-    --accent: #91dfd2;
-    --hover: #6bc7b6;
-    --text-color: white;
-    --background-color: #111111;
-    --alt-background-color: #212121;
-    table-layout: fixed;
-    width: 100%;
-}
-
-#topic-data-table .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table thead th {
-    background-color: #111111; 
-    color: white; 
-    font-weight: bold; 
-    font-size: 16px; 
-    font-family: 'Lato', sans-serif;
-}
-
-#topic-data-table .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table tbody td {
-    background-color: #111111; 
-    color: white; 
-    border: 1px solid #588A87; 
-    text-align: left; 
-    padding: 5px; 
-    font-size: 14px; 
-    font-family: 'Lato', sans-serif;
-}
-
-#topic-data-table .dash-table-container .dash-spreadsheet-container {
-    overflow-x: auto;
 }
 
 /* Absolute Frequency/Normalized Frequency Tabs
@@ -279,11 +199,6 @@ hr {
     margin-left: 3px;
 }
 
-.html-content {
-    width: 100%;
-    height: 500px;
-}
-
 li a {
     color: #feb106;
     text-decoration: underline;
@@ -308,9 +223,105 @@ li a:hover {
     margin-bottom: 20px;
 }
 
+figcaption {
+    color: lightgrey;
+    font-size: small;
+    text-align: left;
+}
+
+/* Topic Frequency Analysis
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+#topic-frequency-graph {
+    background-color: #212121;
+}
+
+/* Sentiment Shift Analysis
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+#sentiment-analysis-graph {
+    background-color: #212121;
+}
+
+/* Topic Data
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+#topic-data-table .dash-table-container {
+    font-size: 16px;
+    font-family: 'Lato', sans-serif;
+    height: 600px;
+    overflow-y: auto;
+}
+
+/* Topic Table Header */
+#topic-data-table .dash-table-container .dash-header {
+    background-color: #111111;
+    color: white;
+    font-weight: bold;
+    text-align: left;
+    font-family: 'Lato', sans-serif;
+}
+
+/* Topic Table Cell */
+#topic-data-table .dash-table-container .dash-cell {
+    background-color: #111111;
+    color: white;
+    border: 1px solid #588A87;
+    text-align: left;
+    padding: 5px;
+    font-size: 14px;
+    font-family: 'Lato', sans-serif;
+}
+
+/* Topic Table Legend */
+.topic-table-legend {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.topic-table-legend p {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.topic-table-legend span {
+    color: black;
+    padding: 2px 5px;
+    margin-right: 10px;
+}
+
+.topic-table-legend .positive {
+    background-color: #B0DBA4;
+}
+
+.topic-table-legend .neutral {
+    background-color: #FEE191;
+}
+
+.topic-table-legend .negative {
+    background-color: #FF887E;
+}
+
+/* Topic Table Data Conditional Styles */
+.topic-table-positive {
+    background-color: #B0DBA4 !important;
+    color: black !important;
+    font-family: 'Lato, sans-serif';
+}
+
+.topic-table-negative {
+    background-color: #FF887E !important;
+    color: black !important;
+    font-family: 'Lato, sans-serif';
+}
+
+.topic-table-neutral {
+    background-color: #FEE191 !important;
+    color: black !important;
+    font-family: 'Lato, sans-serif';
+}
+
 /* Media Queries for Mobile Responsiveness */
 @media (max-width: 600px) {
-    /* Adjust main title and Learn More button */
+    /* Adjust main title */
     .main-title {
         width: 100%;
         font-size: 20px;
@@ -320,10 +331,6 @@ li a:hover {
     }
     .main-title p {
         font-size: 12px;
-    }
-    .main-title .button-primary {
-        font-size: 14px;
-        padding: 8px 12px;
     }
 
     /* Adjust graph and table sizes */
@@ -378,10 +385,6 @@ li a:hover {
     }
     
     /* Adjust legend size */
-    #topic-frequency-graph .legend .legenditem {
-        font-size: 10px;
-    }
-
     #topic-frequency-graph .legend .legenditem .legendtext {
         white-space: normal;
         line-height: 1.2;

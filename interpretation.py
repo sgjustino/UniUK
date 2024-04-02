@@ -118,15 +118,15 @@ def generate_topic_data_table(sentiment_data):
     # Extract year for filtering
     filtered_data['Year'] = filtered_data['created_utc'].apply(lambda x: int(x.split(' ')[1]))
 
-    # Filter data for page 3 (assuming 10 rows per page)
-    start_index = 20
-    end_index = 30
+    # Filter data for page 5 (assuming 10 rows per page)
+    start_index = 40
+    end_index = 50
     filtered_data = filtered_data.iloc[start_index:end_index]
 
     # Rename columns for the table display
     filtered_data = filtered_data.rename(columns={'created_utc': 'Date', 'body': 'Content', 'sentiment': 'Sentiment'})
 
-    # Apply conditional styling based on sentiment
+    # Define the styles for data conditional formatting
     styles = [
         {
             'if': {'filter_query': '{Sentiment} = "positive"'},
@@ -165,18 +165,9 @@ def generate_topic_data_table(sentiment_data):
                 },
                 style_data_conditional=styles,
                 style_cell_conditional=[
-                    {'if': {'column_id': 'Date'},
-                     'width': '7%',
-                     'fontSize': '16px',
-                     'textAlign': 'left'},
-                    {'if': {'column_id': 'Content'},
-                     'whiteSpace': 'normal',
-                     'textOverflow': 'ellipsis',
-                     'fontSize': '16px',
-                     'textAlign': 'left'},
-                    {'if': {'column_id': 'sentiment'},
-                     'width': '0.1%',
-                     'textAlign': 'left'}
+                    {'if': {'column_id': 'Date'}, 'width': '7%', 'fontSize': '16px', 'textAlign': 'left'},
+                    {'if': {'column_id': 'Content'}, 'whiteSpace': 'normal', 'textOverflow': 'ellipsis', 'width': '92.9%', 'fontSize': '16px', 'textAlign': 'left'},
+                    {'if': {'column_id': 'sentiment'}, 'width': '0.1%', 'textAlign': 'left'}
                 ]
             )
         ]
@@ -184,20 +175,21 @@ def generate_topic_data_table(sentiment_data):
 
     # Create a figure to display the table
     fig = go.Figure(data=[go.Table(
+        columnwidth=[70, 929, 1],
         header=dict(
             values=desired_columns,
-            fill_color='black',
+            fill_color=['black'] * len(desired_columns),
             font=dict(color='white', size=12),
-            align='left'
+            align=['left'] * len(desired_columns)
         ),
         cells=dict(
             values=[filtered_data[col] for col in desired_columns],
-            fill_color=[styles[0]['backgroundColor'], styles[1]['backgroundColor'], styles[2]['backgroundColor']],
+            fill_color=[filtered_data['Sentiment'].map({'positive': '#B0DBA4', 'negative': '#FF887E', 'neutral': '#FEE191'})],
             font=dict(color='black', size=11),
-            align='left'
+            align=['left'] * len(desired_columns)
         )
     )])
-    
+
     fig.update_layout(
         template="plotly_white",
         margin=dict(t=0, b=0, l=0, r=0),

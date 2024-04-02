@@ -15,7 +15,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 #################
 
 '''
-Load Data, remove error data, convert date correctly, merge Topic 1 to outliers and shift topic numbers sequentially
+Load Data, remove error data and convert date correctly
 '''
 
 # Build the path to the file
@@ -30,24 +30,28 @@ sentiment_data = sentiment_data[sentiment_data['Topic_Label'].notna()]
 #convert the 'created_utc' column to datetime format
 sentiment_data['created_utc'] = pd.to_datetime(sentiment_data['created_utc'])
 
-# Update Topic and Topic_Label for rows with Topic 99 to Topic 75
-# Shift Topic 99 down to prevent range break
-# Merge Topic 1 to outliers as Topic 1 (Thank, Thanks, Comment, Post) is not useful
-# Common for BerTopic to have the large topic cluster as additional outliers)
+'''
+(1) Update Topic and Topic_Label for rows with Topic 99 to Topic 75 to prevent range break for range slider
+(2) Merge Topic 1 to Outliers as Topic 1 (Thank, Thanks, Comment, Post) is not useful
+(3) Decrement all Topic and Topic_Label values by 1 (with the removal of Topic 1)
+
+Note: this step was taken post-visualisation during the data sense-making
+'''
+
+# Update Topic 99 to 75
 sentiment_data.loc[sentiment_data['Topic'] == 99, 'Topic'] = 75
+
+# Update Topic 1 to Outliers
 sentiment_data.loc[sentiment_data['Topic'] == 1, 'Topic'] = 75
 sentiment_data.loc[sentiment_data['Topic'] == 75, 'Topic_Label'] = 'Topic 75: Outliers'
 
-# Decrement all Topic values by 1
+# Shift all topics down by 1
 sentiment_data['Topic'] -= 1
-
-# Update Topic_Label for all rows to reflect the decremented Topic
 sentiment_data['Topic_Label'] = sentiment_data['Topic_Label'].apply(
-    lambda x: f"Topic {int(x.split(':')[0].split(' ')[1]) - 1}:{x.split(':')[1]}"
-)
+    lambda x: f"Topic {int(x.split(':')[0].split(' ')[1]) - 1}:{x.split(':')[1]}")
 
 '''
-Process Topics for dropdown list usage
+Process Topics for dropdown list usage with Topic Number ordering
 '''
 
 # Create a DataFrame with unique Topic_Label and their corresponding Topic values
@@ -63,11 +67,12 @@ dropdown_options = [{'label': row['Topic_Label'], 'value': row['Topic_Label']} f
 # Dashboard App 
 #################
 
+# Main App server with styles.css
 app = dash.Dash(__name__, external_stylesheets=["assets/styles.css"], suppress_callback_exceptions=True)
 server = app.server
 pd.options.mode.chained_assignment = None
 
-# Set topic range
+# Set topic range (allow update of data and topics)
 try:
     topic_max = int(sentiment_data['Topic'].max())
 except ValueError:
@@ -94,6 +99,7 @@ app.layout = html.Div([
                 ]
             )
         ]),
+
     # Tabs Row (Switch between pages)
     html.Div(className='row', children=[
         html.Div(
@@ -144,6 +150,7 @@ app.layout = html.Div([
             ]
         ),
     ]),
+
     # Content Row (individual pages)
     html.Div(className='row', children=[
         html.Div(
@@ -238,6 +245,8 @@ background_page = html.Div([
                 'fontFamily': 'Lato, sans-serif',
             }
         ),
+
+        # Meta-data explanation
         html.Ul([
             html.Li("body: The text content within a post. It encompasses both initial submissions (which start discussion threads) and subsequent comments. By analyzing these elements collectively, we treat them as a unified set of social media posts for examination."),
             html.Li("created_utc: The timestamp of when the post was created."),
@@ -248,6 +257,7 @@ background_page = html.Div([
         ])
     ]),
     html.Hr(),
+
     # Libraries, Inspirations and Tools used
     html.H2("Built With", className="title"),
     html.Hr(),
@@ -261,6 +271,7 @@ background_page = html.Div([
         html.Li("ChatGPT4 and Claude 3 Opus were utilised for code development and bug fixing.")
     ]),
     html.Hr(),
+
     # References
     html.H2("References", className="title"),
     html.Hr(),
@@ -287,12 +298,7 @@ topic_frequency_page = html.Div([
     "(1) Select Range of Topics.", 
     html.Br(),
     "(2) Select Type of Frequency: Absolute Counts or Normalized Percentages (% of frequency for the topic out of all selected topics)."
-    ], style={
-        'color': '#efefef',  
-        'fontWeight': 'bold',  
-        'fontSize': '14px',
-        'marginTop': '-5px' 
-    }),
+    ], className="instructions"),
     # Page Topic Slider
     dcc.RangeSlider(
         id='topic-range-slider',
@@ -330,12 +336,7 @@ sentiment_analysis_page = html.Div([
     "(1) Select Topic of Interest.", 
     html.Br(),
     "(2) Select Type of Frequency: Absolute Counts or Normalized Percentages (% of frequency for the topic out of all selected topics)."
-    ], style={
-        'color': '#efefef',  
-        'fontWeight': 'bold',  
-        'fontSize': '14px',
-        'marginTop': '-5px'
-    }),
+    ], className="instructions"),
     # Page Topic Dropdown List
     dcc.Dropdown(
         id='topic-dropdown',
@@ -369,12 +370,7 @@ topic_data_page = html.Div([
     "(1) Select Topic of Interest.", 
     html.Br(),
     "(2) Select Range of Years."
-    ],  style={
-        'color': '#efefef',  
-        'fontWeight': 'bold',  
-        'fontSize': '14px',
-        'marginTop': '-5px' 
-    }),
+    ], className="instructions"),
     # Page Topic Dropdown List
     dcc.Dropdown(
         id='topic-data-dropdown',
@@ -394,13 +390,14 @@ topic_data_page = html.Div([
     ),
     # Topic Table Legend
     html.Div([
-    html.Div([
-        html.P("Content Sentiment:", style={'font-weight': 'bold', 'margin-right': '10px'}),
-        html.Span("Positive", style={'color': 'black', 'background-color': '#B0DBA4', 'padding': '2px 5px', 'margin-right': '10px'}),
-        html.Span("Neutral", style={'color': 'black', 'background-color': '#FEE191', 'padding': '2px 5px', 'margin-right': '10px'}),
-        html.Span("Negative", style={'color': 'black', 'background-color': '#FF887E', 'padding': '2px 5px'})
-    ], style={'display': 'flex', 'align-items': 'center', 'margin-top': '0px'})
-]),
+        html.Div([
+            html.P("Content Sentiment:", className="topic-table-legend-title"),
+            html.Span("Positive", className="topic-table-legend positive"),
+            html.Span("Neutral", className="topic-table-legend neutral"),
+            html.Span("Negative", className="topic-table-legend negative")
+        ], className="topic-table-legend")
+    ]),
+
     # Topic Table
     html.Div(
         className='table-container',
@@ -491,7 +488,7 @@ interpretation_page = html.Div([
     # Example of AI-powered Visualisation  
     html.Figure([
         html.Img(src='/assets/future_direction.gif', style={'width': '70%', 'height': '70%'}),
-        html.Figcaption("Example of AI-powered visualisation from Biswas (2023).", style={'color': 'lightgrey', 'fontSize': 'small', 'textAlign': 'left'})
+        html.Figcaption("Example of AI-powered visualisation from Biswas (2023).")
     ]),
     html.Hr(),
     
@@ -571,6 +568,7 @@ def update_figure(selected_range, frequency_type):
     # Reorder DataFrame columns according to the sorted topics
     topic_freq_over_time = topic_freq_over_time[sorted_columns]
     topic_freq_over_time_normalized = topic_freq_over_time_normalized[sorted_columns]
+
     # Initialize figure
     fig = go.Figure()
     
@@ -620,11 +618,13 @@ def update_figure(selected_range, frequency_type):
 #################
 
 def update_sentiment_analysis_graph(selected_topic_label, frequency_type):
+    
+    # Absolute Frequencies
     # Reset the index 'created_utc' 
     if sentiment_data.index.name == 'created_utc':
         sentiment_data.reset_index(inplace=True)
     
-    # Group 'created_utc', 'Topic_Label', and 'sentiment' for Data Table
+    # Group 'created_utc', 'Topic_Label', and 'sentiment' for analysis
     sentiment_counts = sentiment_data.groupby(
         [pd.Grouper(key='created_utc', freq='Q'), 'Topic_Label', 'sentiment']
     ).size().unstack(fill_value=0).reset_index()
@@ -639,7 +639,7 @@ def update_sentiment_analysis_graph(selected_topic_label, frequency_type):
         sentiment_counts['Topic_Label'] == selected_topic_label
     ].copy()
     
-    # Get the actual Topic_Label for the selected topic
+    # Get the actual Topic_Label for the selected topic (for title)
     topic_label = filtered_sentiment_counts['Topic_Label'].iloc[0]
     
     # Define colors for each sentiment
@@ -787,32 +787,18 @@ def update_topic_data(selected_topic_label, year_range):
                 columns=[{"name": i, "id": i} for i in desired_columns],
                 data=filtered_data.to_dict('records'),
                 page_size=10,
-                style_header={
-                    'backgroundColor': '#111111',
-                    'color': 'white',
-                    'fontWeight': 'bold',
-                    'text-align': 'left',
-                    'fontFamily': 'Lato, sans-serif'
-                },
-
-                # To Hide Sentiment Tab
                 style_data_conditional=styles,
                 style_cell_conditional=[
-                    {'if': {'column_id': 'Date'},
-                     'width': '7%',
-                     'fontSize': '16px'},
-                    {'if': {'column_id': 'Content'},
-                     'whiteSpace': 'normal',
-                     'textOverflow': 'ellipsis',
-                     'fontSize': '16px'},
-                    {'if': {'column_id': 'sentiment'},
-                     'width': '0.1%'}
+                    {'if': {'column_id': 'Date'}, 'width': '7%', 'fontSize': '16px', 'textAlign': 'left'},
+                    {'if': {'column_id': 'Content'}, 'whiteSpace': 'normal', 'textOverflow': 'ellipsis', 'width': '92.9%', 'fontSize': '16px', 'textAlign': 'left'},
+                    {'if': {'column_id': 'sentiment'}, 'width': '0.1%', 'textAlign': 'left'}
                 ]
             )
         ]
     )
 
     return f"Topic Data - {topic_label}", table
+
 
 # Running the app
 if __name__ == '__main__':
