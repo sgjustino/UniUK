@@ -105,13 +105,13 @@ Alternatively, you can run the application using the Docker image available on D
 1. Pull the Docker image from Docker Hub:
 
    ```
-   docker pull razuki/uniuk-app
+   docker pull razuki/uniuk-app:latest
    ```
 
 2. Run the Docker container:
 
    ```
-   docker run -p 8050:8050 razuki/uniuk-app
+   docker run -p 8050:8050 razuki/uniuk-app:latest
    ```
 
    This command maps port 8050 of the container to port 8050 on your local machine.

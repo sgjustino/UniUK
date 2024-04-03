@@ -15,11 +15,11 @@ COPY . /app
 # Run the tests
 RUN pytest tests/
 
-# Make port 80 available to the world outside this container
-EXPOSE 80
+# Make port 8050 available to the world outside this container
+EXPOSE 8050
 
 # Define environment variable for the port
-ENV PORT=80
+ENV PORT=8050
 
 # Command to run the app
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:80", "app:server"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8050", "app:server"]
