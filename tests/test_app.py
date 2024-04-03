@@ -3,7 +3,7 @@ import sys
 import os
 import pandas as pd
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from app import sentiment_data, topic_label_df, update_figure, update_sentiment_analysis_graph
+from app import sentiment_data, topic_label_df, update_topic_frequency_graph, update_sentiment_analysis_graph
 
 
 # Test the data preprocessing steps to ensure error data is removed, 'created_utc' column is converted to datetime format, and topic numbers are updated correctly
@@ -31,10 +31,10 @@ def test_dropdown_options_generation():
 
 # Test the topic frequency normalization to ensure the frequencies are normalized correctly
 def test_topic_frequency_normalization():
-    # Retrieve the normalized frequency data from the update_figure function
+    # Retrieve the normalized frequency data from the update_topic_frequency_graph function
     selected_range = [1, 10]
     frequency_type = 'normalized'
-    fig = update_figure(selected_range, frequency_type)
+    fig = update_topic_frequency_graph(selected_range, frequency_type)
 
     # Extract the normalized frequency data from the figure traces
     normalized_frequencies = [trace["y"] for trace in fig["data"] if "Normalized" in trace["name"]]
