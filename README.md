@@ -67,8 +67,6 @@ The `app.py` script contains the following main components:
 
 8. **Callbacks**: This section contains the callbacks that update the visualizations and data tables based on user interactions with the dashboard components.
 
-Certainly! Here's an updated version of your instructions for running the repository locally, including steps to clone the repository and how to use the Docker image from Docker Hub:
-
 ## Running Locally
 
 ### Cloning the Repository
