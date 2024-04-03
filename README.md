@@ -71,7 +71,7 @@ The `app.py` script contains the following main components:
 
 ### Cloning the Repository
 
-Before running the application, you need to clone the repository to your local machine:
+First, clone the repository to your local machine:
 
 ```
 git clone https://github.com/sgjustino/UniUK.git
