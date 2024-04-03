@@ -4,6 +4,17 @@ from dash import dash_table
 from dash import html
 
 def generate_topic_frequency_html(sentiment_data, topic_max):
+    """
+    Generate the topic frequency figure in HTML format.
+
+    Args:
+        sentiment_data (pd.DataFrame): The sentiment data DataFrame.
+        topic_max (int): The maximum number of topics to consider.
+
+    Returns:
+        go.Figure: The topic frequency figure.
+    """
+    
     # Generate the topic frequency figure
     fig = go.Figure()
     
@@ -56,6 +67,16 @@ def generate_topic_frequency_html(sentiment_data, topic_max):
     return fig
 
 def generate_sentiment_analysis_html(sentiment_data):
+    """
+    Generate the sentiment analysis figure in HTML format.
+
+    Args:
+        sentiment_data (pd.DataFrame): The sentiment data DataFrame.
+
+    Returns:
+        go.Figure: The sentiment analysis figure.
+    """
+
     # Generate the sentiment analysis figure
     fig = go.Figure()
     
@@ -106,6 +127,16 @@ def generate_sentiment_analysis_html(sentiment_data):
     return fig
 
 def generate_topic_data_table(sentiment_data):
+    """
+    Generate the topic data table in HTML format.
+
+    Args:
+        sentiment_data (pd.DataFrame): The sentiment data DataFrame.
+
+    Returns:
+        dash_table.DataTable: The topic data table.
+    """
+    
     # Filter sentiment_data for Topic 8
     filtered_data = sentiment_data[sentiment_data['Topic_Label'] == "Topic 8: Mental, Health, Adhd, Gp"]
 

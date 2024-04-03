@@ -109,16 +109,22 @@ hr {
     margin-left: 3px;
 }
 
-/* Dropdowns
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
+/* Dropdowns */
 .Select-control {
-    background-color: #white;
-    color: black;
-    font-size: 18px;
-    font-weight: 600;
-    border: none;
-    font-family: 'Lato', sans-serif; 
+    background-color: white !important;
+    color:black;
+}  
+
+.Select-value-label {
+    color: black !important;
+    background-color: white;
+    font-weight: bold;
 }
+
+.Select-menu-outer {
+    background-color: #91dfd2;
+    color: black;
+}  
 
 /* Range Slider
 –––––––––––––––––––––––––––––––––––––––––––––––––– */

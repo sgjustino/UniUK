@@ -341,7 +341,9 @@ sentiment_analysis_page = html.Div([
     dcc.Dropdown(
         id='topic-dropdown',
         options=dropdown_options,
-        value=topic_label_df['Topic_Label'].iloc[0]
+        value=topic_label_df['Topic_Label'].iloc[0],
+        className='Select',
+        clearable=False
     ),
     # Page Frequency Tabs
     dcc.Tabs(
@@ -376,7 +378,9 @@ topic_data_page = html.Div([
         id='topic-data-dropdown',
         options=dropdown_options,
         value=topic_label_df['Topic_Label'].iloc[0],
-        style={'marginBottom': '20px'}
+        style={'marginBottom': '20px'},
+        className='Select',
+        clearable=False
     ),
     # Page Year Slider
     dcc.RangeSlider(
@@ -537,7 +541,18 @@ def display_page(tab):
 # Topic Frequency Visualisation
 #################
 
-def update_figure(selected_range, frequency_type):
+def update_topic_frequency_graph(selected_range, frequency_type):
+    """
+    Update the topic frequency graph based on the selected topic range and frequency type.
+
+    Args:
+        selected_range (list): A list containing the start and end values of the selected topic range.
+        frequency_type (str): The type of frequency to display ('absolute' or 'normalized').
+
+    Returns:
+        go.Figure: The updated topic frequency graph figure.
+    """
+
     # Filter data based on selected topic range
     filtered_data = sentiment_data[sentiment_data['Topic'].isin(range(selected_range[0], selected_range[1] + 1))]
 
@@ -618,7 +633,17 @@ def update_figure(selected_range, frequency_type):
 #################
 
 def update_sentiment_analysis_graph(selected_topic_label, frequency_type):
-    
+    """
+    Update the sentiment analysis graph based on the selected topic and frequency type.
+
+    Args:
+        selected_topic_label (str): The selected topic label from the dropdown.
+        frequency_type (str): The type of frequency to display ('absolute' or 'normalized').
+
+    Returns:
+        tuple: A tuple containing the updated title and figure for the sentiment analysis graph.
+    """
+
     # Absolute Frequencies
     # Reset the index 'created_utc' 
     if sentiment_data.index.name == 'created_utc':
@@ -726,6 +751,17 @@ def update_sentiment_analysis_graph(selected_topic_label, frequency_type):
 #################
 
 def update_topic_data(selected_topic_label, year_range):
+    """
+    Update the topic data table based on the selected topic label and year range.
+
+    Args:
+        selected_topic_label (str): The selected topic label from the dropdown.
+        year_range (list): A list containing the start and end years of the selected range.
+
+    Returns:
+        tuple: A tuple containing the updated title and table for the topic data.
+    """
+
     # Check if sentiment_data is empty
     if sentiment_data.empty:
         return "No data available", None
