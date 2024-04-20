@@ -290,8 +290,11 @@ background_page = html.Div([
             html.Li("sentiment: The sentiment of the post as determined by VaderSentiment (positive, neutral, or negative)."),
             html.Li("processed_text: The processed content of the post using custom stopwords and NLTK library."),
             html.Li("Topic: The topic number that the post belongs to as determined by BerTopic. Topic 74 refers to the outliers not classified into any specific topic."),
-            html.Li("Topic_Label: The descriptive label assigned to each topic, derived from the four most representative words identified through a class-based Term Frequency-Inverse Document Frequency analysis of the topic's content (Grootendorst, 2022).")
-        ])
+            html.Li("Topic_Label: The descriptive label assigned to each topic, derived from the four most representative words identified through a class-based Term Frequency-Inverse Document Frequency analysis of the topic's content (Grootendorst, 2022)."),
+            dcc.Markdown('''
+            Note: The naming conventions for Topic and Topic_Label adhere to those established by BERTopic, utilizing capitalization for consistency and to facilitate future interactions with the library.
+            ''')
+        ]),
     ]),
     html.Hr(),
 
