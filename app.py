@@ -1,4 +1,4 @@
-# Dependencies
+# Imports
 import pandas as pd 
 import os
 import plotly.graph_objs as go
@@ -9,15 +9,46 @@ from interpretation import generate_topic_frequency_html, generate_sentiment_ana
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
+'''
+This app contains the following main components:
+
+* Data Processing: This section loads the data from the CSV file, removes error 
+  data, converts the date correctly, merges Topic 1 to outliers, and shifts 
+  topic numbers sequentially.
+
+* Dashboard App: This section initializes the Dash application and sets up the 
+  overall layout of the dashboard.
+
+* Background Page: This section defines the layout and components for the 
+  background page, including the data table to explain the meta-data.
+
+* Topic Frequency Page: This section defines the layout and components for the 
+  topic frequency analysis page, including a range slider for selecting the 
+  range of topics and tabs for displaying absolute and normalized frequencies.
+
+* Sentiment Analysis Page: This section defines the layout and components for 
+  the sentiment analysis page, including a dropdown for selecting the topic of 
+  interest and tabs for displaying absolute and normalized frequencies.
+
+* Topic Data Page: This section defines the layout and components for the topic 
+  data page, including a dropdown for selecting the topic of interest and a 
+  range slider for selecting the range of years.
+
+* Interpretation Page: This section defines the layout and components for the 
+  interpretation page, including the generation of the 3 htmls from 
+  interpretation.py and the example gif.
+
+* Callbacks: This section contains the callbacks that update the visualizations 
+  and data tables based on user interactions with the dashboard components.
+'''
+
+
 
 #################
 # Data Processing
 #################
 
-'''
-Load Data, remove error data and convert date correctly
-'''
-
+# Load Data, remove error data and convert date correctly
 # Build the path to the file
 file_path = os.path.join(os.getcwd(), 'data', 'uniuk_sentiment_data.csv')
 
@@ -35,7 +66,7 @@ sentiment_data['created_utc'] = pd.to_datetime(sentiment_data['created_utc'])
 (2) Merge Topic 1 to Outliers as Topic 1 (Thank, Thanks, Comment, Post) is not useful
 (3) Decrement all Topic and Topic_Label values by 1 (with the removal of Topic 1)
 
-Note: this step was taken post-visualisation during the data sense-making
+Note: this step was interatively taken during the data sense-making
 '''
 
 # Update Topic 99 to 75
@@ -63,6 +94,8 @@ topic_label_df = topic_label_df.sort_values('Topic')
 # Create the options for the dropdown
 dropdown_options = [{'label': row['Topic_Label'], 'value': row['Topic_Label']} for _, row in topic_label_df.iterrows()]
 
+
+
 #################
 # Dashboard App 
 #################
@@ -77,6 +110,8 @@ try:
     topic_max = int(sentiment_data['Topic'].max())
 except ValueError:
     topic_max = 10
+
+
 
 #################
 # App Layout
@@ -158,6 +193,8 @@ app.layout = html.Div([
             children=[html.Div(id='page-content')]        )
     ])
 ])
+
+
 
 #################
 # Background Page
@@ -286,6 +323,8 @@ background_page = html.Div([
     html.Hr()
 ])
 
+
+
 #################
 # Topic Frequency Page
 #################
@@ -324,6 +363,8 @@ topic_frequency_page = html.Div([
     )
 ])
 
+
+
 #################
 # Sentiment Analysis Page
 #################
@@ -360,6 +401,8 @@ sentiment_analysis_page = html.Div([
         children=[dcc.Graph(id='sentiment-analysis-graph')]
     )
 ])
+
+
 
 #################
 # Topic Data Page
@@ -408,6 +451,8 @@ topic_data_page = html.Div([
         children=[html.Div(id='topic-data-table')]
     )
 ])
+
+
 
 #################
 # Interpretation Page
@@ -509,6 +554,8 @@ interpretation_page = html.Div([
     html.Li("Winstone, L., Mars, B., Haworth, C. M., & Kidger, J. (2021). Social media use and social connectedness among adolescents in the United Kingdom: a qualitative exploration of displacement and stimulation. BMC public health, 21, 1-15.", className="reference")
 ])
 
+
+
 #################
 # Callbacks
 #################
@@ -536,6 +583,8 @@ def display_page(tab):
     [Input('topic-range-slider', 'value'),
      Input('frequency-tabs', 'value')]
 )
+
+
 
 #################
 # Topic Frequency Visualisation
@@ -627,6 +676,8 @@ def update_topic_frequency_graph(selected_range, frequency_type):
     [Input('topic-dropdown', 'value'),
      Input('sentiment-frequency-tabs', 'value')]
 )
+
+
 
 #################
 # Sentiment Analysis Visualisation
@@ -746,6 +797,8 @@ def update_sentiment_analysis_graph(selected_topic_label, frequency_type):
      Input('year-range-slider', 'value')]
 )
 
+
+
 #################
 # Topic Table Visualisation
 #################
@@ -834,6 +887,7 @@ def update_topic_data(selected_topic_label, year_range):
     )
 
     return f"Topic Data - {topic_label}", table
+
 
 
 # Running the app
