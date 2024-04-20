@@ -9,11 +9,11 @@ This repository contains a data visualization dashboard for analyzing and visual
 
 The dashboard is built using Dash (Plotly) with the following components:
 
-* Background Page: Introduces the study motivation and research question, guides users on exploring the dashboard findings and provide additional details like data source, preprocessing steps and references.
-* Topic Frequency Page: Allows users to view the frequency of selected topics over time, either as absolute counts or normalized percentages, to identify popular topics and trends over time.
-* Sentiment Analysis Page: Enables users to analyze sentiment trends for a specific topic over time, using absolute counts or normalized percentages views, to understand the emotional tone of discussions.
-* Topic Data Page: Provides a table view of the individual posts for a selected topic and year range, with sentiment indicated by cell color, allowing users to explore specific discussions.
-* Interpretation Page: Demonstrates how to use the dashboard to examine the research question through an example analysis of a specific topic, showcasing insights and conclusions.
+* `Background Page`: Introduces the study motivation and research question, guides users on exploring the dashboard findings and provide additional details like data source, preprocessing steps and references.
+* `Topic Frequency Page`: Allows users to view the frequency of selected topics over time, either as absolute counts or normalized percentages, to identify popular topics and trends over time.
+* `Sentiment Analysis Page`: Enables users to analyze sentiment trends for a specific topic over time, using absolute counts or normalized percentages views, to understand the emotional tone of discussions.
+* `Topic Data Page`: Provides a table view of the individual posts for a selected topic and year range, with sentiment indicated by cell color, allowing users to explore specific discussions.
+* `Interpretation Page`: Demonstrates how to use the dashboard to examine the research question through an example analysis of a specific topic, showcasing insights and conclusions.
     
 ## Data Source and Preprocessing
 
@@ -26,26 +26,27 @@ To focus on the visualisation aspects, the detailed data modeling steps are not 
 
 ## Meta-Data for Processed Data
 
-* body: The text content within a post. It encompasses both initial submissions (which start discussion threads) and subsequent comments. By analyzing these elements collectively, we treat them as a unified set of social media posts for examination.
-* created_utc: The timestamp of when the post was created.
-sentiment: The sentiment of the post as determined by VaderSentiment (positive, neutral, or negative).
-* processed_text: The processed content of the post using custom stopwords and NLTK library.
-* Topic: The topic number that the post belongs to as determined by BerTopic. Topic 74 refers to the outliers not classified into any specific topic.
-* Topic_Label: The descriptive label assigned to each topic, derived from the four most representative words identified through a class-based Term Frequency-Inverse Document Frequency analysis of the topic's content (Grootendorst, 2022).
+* `body`: The text content within a post. It includes both initial submissions (which start discussion threads) and subsequent comments. By analyzing these elements collectively, we treat them as a unified set of social media posts for examination.
+* `created_utc`: The timestamp of when the post was created.
+* `sentiment`: The sentiment of the post as determined by VaderSentiment (positive, neutral, or negative).
+* `processed_text`: The processed content of the post using custom stopwords and NLTK library.
+* `Topic`: The topic number (1 to 74) that the post belongs to as determined by BerTopic. Topic 74 refers to the outliers not classified into any specific topic.
+* `Topic_Label`: The descriptive label assigned to each topic, derived from the four most representative words identified through a class-based Term Frequency-Inverse Document Frequency analysis of the topic's content (Grootendorst, 2022).
+
+Note: The naming conventions for `Topic` and `Topic_Label` adhere to those established by BERTopic, utilizing capitalization for consistency and to facilitate future interactions with the library.
 
 ## Repository Structure
 
-- `.gitattributes`: The configuration file that specifies which files should be handled by Git Large File Storage (LFS), used for handling of the csv file.
-- `dockerfile`: The Dockerfile to build a Docker image for the repository, containing instructions for how to assemble the Docker container with the necessary environment and dependencies. [Docker Image Link](https://hub.docker.com/r/razuki/uniuk-app)
-- `requirements.txt`: A file listing the required Python packages and their versions to run the application, used to ensure consistent environments across different setups.
-- `app.py`: The main Python script that contains the Dash application code for the visualization dashboard.
-- `interpretation.py`: The Python script that generates the HTML files used for the interpretation page within the dashboard.
-- `tests/test_app.py`: A Python script for unit tests and data checks to ensure the application functions correctly.
+- `assets/styles.css`: The CSS file containing custom styles for the dashboard to enhance its appearance.
+- `assets/future_direction.gif`: The GIF file showcasing an example of AI-powered visualizations for future directions or features.
 - `data/uniuk_sentiment_data.csv`: The preprocessed dataset used for visualization in the dashboard.
-- `fig/`: A folder containing visualizations saved and used in the interpretation page (generated by `interpretation.py`).
-- `assets/styles.css`: A CSS file containing custom styles for the dashboard to enhance its appearance.
-- `assets/future_direction.gif`: A GIF file showcasing an example of AI-powered visualizations for future directions or features.
-- `LICENSE.md`: The MIT License file that outlines the permissions and limitations for using the software in this repository.
+- `fig/`: The folder containing visualizations saved and used in the interpretation page (generated by `interpretation.py`).
+- `tests/test_app.py`: The Python script for unit tests and data checks to ensure the application functions correctly.
+- `.gitattributes`: The configuration file that specifies which files should be handled by Git Large File Storage (LFS), used for handling of the data file.
+- `app.py`: The main Python script that contains the Dash application code for the visualization dashboard.
+- `dockerfile`: The Dockerfile to build the Docker image for the repository, with the necessary environment and dependencies. [Docker Image Link](https://hub.docker.com/r/razuki/uniuk-app)
+- `interpretation.py`: The Python script that generates the HTML files used for the interpretation page within the dashboard.
+- `requirements.txt`: The file listing the required Python packages to run the application.
 
 ## App.py Components
 
@@ -134,20 +135,20 @@ Alternatively, you can run the application using the Docker image available on D
 
 ## References
 
-- Al-Natour, S., & Turetken, O. (2020). A comparative assessment of sentiment analysis and star ratings for consumer reviews. International Journal of Information Management, 54, 102132.
-- Baumgartner, J., Zannettou, S., Keegan, B., Squire, M., & Blackburn, J. (2020, May). The pushshift reddit dataset. In Proceedings of the international AAAI conference on web and social media (Vol. 14, pp. 830-839).
+- Al-Natour, S., & Turetken, O. (2020). A comparative assessment of sentiment analysis and star ratings for consumer reviews. International Journal of Information Management, 54, 102132. https://doi.org/10.1016/j.ijinfomgt.2020.102132
+- Baumgartner, J., Zannettou, S., Keegan, B., Squire, M., & Blackburn, J. (2020, May). The pushshift reddit dataset. In Proceedings of the international AAAI conference on web and social media (Vol. 14, pp. 830-839). https://doi.org/10.1609/icwsm.v14i1.7347
 - Biswas, A. (2023, October 17). AI-powered data visualizations: Introducing an app to generate charts using only a single prompt and OpenAI large language models. Databutton. https://medium.com/databutton/ai-powered-data-visualization-134e89d82d99
-- Briggs, A. R., Clark, J., & Hall, I. (2012). Building bridges: understanding student transition to university. Quality in higher education, 18(1), 3-21.
-- Gagné, T., Schoon, I., McMunn, A., & Sacker, A. (2021). Mental distress among young adults in Great Britain: long-term trends and early changes during the COVID-19 pandemic. Social Psychiatry and Psychiatric Epidemiology, 1-12.
-- Grootendorst, M. (2022). BERTopic: Neural topic modeling with a class-based TF-IDF procedure. arXiv preprint arXiv:2203.05794.
+- Briggs, A. R., Clark, J., & Hall, I. (2012). Building bridges: understanding student transition to university. Quality in higher education, 18(1), 3-21. https://doi.org/10.1080/13538322.2011.614468
+- Gagné, T., Schoon, I., McMunn, A., & Sacker, A. (2021). Mental distress among young adults in Great Britain: long-term trends and early changes during the COVID-19 pandemic. Social Psychiatry and Psychiatric Epidemiology, 1-12. https://doi.org/10.1007/s00127-021-02194-7
+- Grootendorst, M. (2022). BERTopic: Neural topic modeling with a class-based TF-IDF procedure. arXiv preprint arXiv:2203.05794. https://doi.org/10.48550/arXiv.2203.0579
 - Grootendorst, M. (2023, August 22). Topic modeling with Llama 2: Create easily interpretable topics with Large Language Models. Towards Data Science. https://towardsdatascience.com/topic-modeling-with-llama-2-85177d01e174
-- Guo, Y., Ge, Y., Yang, Y. C., Al-Garadi, M. A., & Sarker, A. (2022). Comparison of pretraining models and strategies for health-related social media text classification. In Healthcare (Vol. 10, No. 8, p. 1478). MDPI.
-- Hutto, C.J. & Gilbert, E.E. (2014). VADER: A Parsimonious Rule-based Model for Sentiment Analysis of Social Media Text. Eighth International Conference on Weblogs and Social Media (ICWSM-14). Ann Arbor, MI, June 2014.
-- Reddy, K. J., Menon, K. R., & Thattil, A. (2018). Academic stress and its sources among university students. Biomedical and pharmacology journal, 11(1), 531-537.
-- Samaras, L., García-Barriocanal, E., & Sicilia, M. A. (2023). Sentiment analysis of COVID-19 cases in Greece using Twitter data. Expert Systems with Applications, 230, 120577.
-- Solatorio, A. V. (2024). GISTEmbed: Guided In-sample Selection of Training Negatives for Text Embedding Fine-tuning. arXiv preprint arXiv:2402.16829.
-- Souza, F. D., & Filho, J. B. D. O. E. S. (2022). BERT for sentiment analysis: pre-trained and fine-tuned alternatives. In International Conference on Computational Processing of the Portuguese Language (pp. 209-218). Cham: Springer International Publishing.
-- Winstone, L., Mars, B., Haworth, C. M., & Kidger, J. (2021). Social media use and social connectedness among adolescents in the United Kingdom: a qualitative exploration of displacement and stimulation. BMC public health, 21, 1-15.
+- Guo, Y., Ge, Y., Yang, Y. C., Al-Garadi, M. A., & Sarker, A. (2022). Comparison of pretraining models and strategies for health-related social media text classification. In Healthcare (Vol. 10, No. 8, p. 1478). MDPI. https://doi.org/10.3390/healthcare10081478
+- Hutto, C.J. & Gilbert, E.E. (2014). VADER: A Parsimonious Rule-based Model for Sentiment Analysis of Social Media Text. Eighth International Conference on Weblogs and Social Media (ICWSM-14). Ann Arbor, MI, June 2014. https://doi.org/10.1609/icwsm.v8i1.14550
+- Reddy, K. J., Menon, K. R., & Thattil, A. (2018). Academic stress and its sources among university students. Biomedical and pharmacology journal, 11(1), 531-537. https://dx.doi.org/10.13005/bpj/1404
+- Samaras, L., García-Barriocanal, E., & Sicilia, M. A. (2023). Sentiment analysis of COVID-19 cases in Greece using Twitter data. Expert Systems with Applications, 230, 120577. https://doi.org/10.1016/j.eswa.2023.120577
+- Solatorio, A. V. (2024). GISTEmbed: Guided In-sample Selection of Training Negatives for Text Embedding Fine-tuning. arXiv preprint arXiv:2402.16829. https://doi.org/10.48550/arXiv.2402.16829
+- Souza, F. D., & Filho, J. B. D. O. E. S. (2022). BERT for sentiment analysis: pre-trained and fine-tuned alternatives. In International Conference on Computational Processing of the Portuguese Language (pp. 209-218). Cham: Springer International Publishing. https://doi.org/10.1007/978-3-030-98305-5_20
+- Winstone, L., Mars, B., Haworth, C. M., & Kidger, J. (2021). Social media use and social connectedness among adolescents in the United Kingdom: a qualitative exploration of displacement and stimulation. BMC public health, 21, 1-15. https://doi.org/10.1186/s12889-021-11802-9
 
 ## License
 
