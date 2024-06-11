@@ -2,7 +2,7 @@
 
 This repository contains a data visualization dashboard for analyzing and visualizing data from the subreddit r/UniUK from February 2016 (the inception of Subreddit r/UniUK) to December 2023. The data has been collected through an open-source project named PushShift and includes a vast number of posts and comments that offer insights into university life in the UK.
 
-## [Access the webpage](https://uniuk.pythonanywhere.com/)
+## [Access the webpage](https://uniuk.app/)
 
 
 ## Navigating the Dashboard
