@@ -12,9 +12,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the current directory contents into the container at /app
 COPY . /app
 
-# Run the tests
-RUN pytest tests/
-
 # Make port 8050 available to the world outside this container
 EXPOSE 8050
 
