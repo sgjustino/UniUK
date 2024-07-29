@@ -1,74 +1,117 @@
 import plotly.graph_objs as go
+from plotly.colors import DEFAULT_PLOTLY_COLORS
 import pandas as pd
 from dash import dash_table
 from dash import html
 
-def generate_topic_frequency_html(sentiment_data, topic_max):
+def generate_topic_frequency_html(sentiment_data):
     """
-    Generate the topic frequency figure in HTML format.
+    Generate the topic frequency figure in HTML format based on a fixed topic range, frequency type, and selected years.
 
     Args:
         sentiment_data (pd.DataFrame): The sentiment data DataFrame.
-        topic_max (int): The maximum number of topics to consider.
 
     Returns:
         go.Figure: The topic frequency figure.
     """
-    
-    # Generate the topic frequency figure
+    selected_range = [1, 20]
+    frequency_type = 'normalized'
+    selected_years = [2016, 2023]
+
+    # Filter data based on selected topic range and years
+    filtered_data_years = sentiment_data[
+        (sentiment_data['Topic'].isin(range(selected_range[0], selected_range[1] + 1))) &
+        (sentiment_data['created_utc'].dt.year >= selected_years[0]) &
+        (sentiment_data['created_utc'].dt.year <= selected_years[1])
+    ]
+
+    # Group by quarter and Topic_Label
+    topic_freq_over_time = filtered_data_years.groupby(
+        [pd.Grouper(key='created_utc', freq='Q'), 'Topic_Label']
+    ).size().unstack(fill_value=0).reset_index()
+
+    # Format the date
+    topic_freq_over_time['created_utc'] = topic_freq_over_time['created_utc'].dt.strftime('%b %Y')
+
+    # Function to extract topic number after removing "Topic " prefix
+    def extract_topic_number(topic_label):
+        try:
+            return int(topic_label.split(":")[0].split(" ")[1])
+        except (ValueError, IndexError):
+            return float('inf')
+
+    # Sort the columns (topics) based on the extracted topic number (ascending order)
+    sorted_columns = sorted(topic_freq_over_time.columns[1:], key=extract_topic_number)
+
+    # Initialize figure
     fig = go.Figure()
     
-    # Add traces for normalized frequencies with all topics
-    filtered_data = sentiment_data[sentiment_data['Topic'].isin(range(1, topic_max))]
-    
-    # Ensure the index is a DatetimeIndex before converting to period
-    if not isinstance(filtered_data.index, pd.DatetimeIndex):
-        filtered_data['created_utc'] = pd.to_datetime(filtered_data['created_utc'])
-        filtered_data.set_index('created_utc', inplace=True)
-    
-    # Create a 'Quarter' column from the 'created_utc' index
-    filtered_data['Quarter'] = filtered_data.index.to_period('Q').astype(str)
-    
-    topic_freq_over_time = filtered_data.groupby(['Quarter', 'Topic_Label']).size().unstack(fill_value=0)
-    topic_freq_over_time_normalized = topic_freq_over_time.div(topic_freq_over_time.sum(axis=1), axis=0) * 100
-    
-    # Sort the columns (topics) based on the extracted topic number
-    sorted_columns = sorted(topic_freq_over_time.columns, key=lambda x: int(x.split(':')[0].split(' ')[1]))
-    
-    # Reorder DataFrame columns according to the sorted topics
-    topic_freq_over_time = topic_freq_over_time[sorted_columns]
-    topic_freq_over_time_normalized = topic_freq_over_time_normalized[sorted_columns]
-    
-    for topic_label in topic_freq_over_time_normalized.columns:
+    def wrap_legend_label(label, max_width=20):
+        words = label.split()
+        lines = []
+        current_line = []
+        current_length = 0
+        for word in words:
+            if current_length + len(word) <= max_width:
+                current_line.append(word)
+                current_length += len(word) + 1
+            else:
+                lines.append(' '.join(current_line))
+                current_line = [word]
+                current_length = len(word)
+        lines.append(' '.join(current_line))
+        return '<br>'.join(lines)
+
+    for i, topic_label in enumerate(sorted_columns):
+        wrapped_label = wrap_legend_label(topic_label)
+        color = DEFAULT_PLOTLY_COLORS[i % len(DEFAULT_PLOTLY_COLORS)]
+        
         fig.add_trace(go.Scatter(
-            x=topic_freq_over_time_normalized.index,
-            y=topic_freq_over_time_normalized[topic_label],
-            mode='lines+markers',
-            name=topic_label
+            x=topic_freq_over_time['created_utc'],
+            y=topic_freq_over_time[topic_label],
+            mode='lines',
+            name=wrapped_label,
+            stackgroup='one',
+            groupnorm='percent' if frequency_type == 'normalized' else None,
+            line=dict(width=1, color=color),
+            fillcolor=color.replace('rgb', 'rgba').replace(')', ', 0.5)'),
+            hoverinfo='name+x+y',
+            hovertemplate='%{fullData.name}<br>Frequency: %{y:.0f}<br>Quarter: %{x}<extra></extra>',
         ))
-    
-    # Additional layout and styling
+
+    # Set y-axis title based on frequency type
+    yaxis_title = "<b>Frequency</b>" if frequency_type == 'absolute' else "<b>Frequency (%)</b>"
+
+    # Update layout
     fig.update_layout(
-        title=dict(
-            text="Tracking Topic Frequencies over Time",
-            x=0.5,
-            font=dict(size=24)
+        height=500,
+        margin=dict(t=10),
+        xaxis=dict(
+            title="<b>Time</b>",
+            automargin=True
         ),
-        xaxis_title="<b>Time</b>",
-        yaxis_title="<b>Normalized Frequency</b>",
-        legend_title="<b>Topic Label</b>",
+        yaxis=dict(
+            title=yaxis_title
+        ),
+        legend=dict(
+            font=dict(size=10),
+            traceorder="normal",
+            itemwidth=30,
+            itemsizing="constant",
+        ),
         template="plotly_dark",
-        margin=dict(t=80, b=80, l=0, r=0),
+        hovermode="closest"
     )
-    
+
     # Save the figure as an HTML file
     fig.write_html("fig/topic_freq_example.html")
-    
+
     return fig
+
 
 def generate_sentiment_analysis_html(sentiment_data):
     """
-    Generate the sentiment analysis figure in HTML format.
+    Generate the sentiment analysis figure in HTML format based on a fixed topic, frequency type, and selected years.
 
     Args:
         sentiment_data (pd.DataFrame): The sentiment data DataFrame.
@@ -76,55 +119,97 @@ def generate_sentiment_analysis_html(sentiment_data):
     Returns:
         go.Figure: The sentiment analysis figure.
     """
+    selected_topic_label = "Topic 8: Mental, Health, Adhd, Gp"
+    frequency_type = 'normalized'
+    selected_years = [2016, 2023]
 
-    # Generate the sentiment analysis figure
+    # Reset the index 'created_utc' 
+    if sentiment_data.index.name == 'created_utc':
+        sentiment_data.reset_index(inplace=True)
+    
+    # Group 'created_utc', 'Topic_Label', and 'sentiment' for analysis
+    sentiment_counts = sentiment_data.groupby(
+        [pd.Grouper(key='created_utc', freq='Q'), 'Topic_Label', 'sentiment']
+    ).size().unstack(fill_value=0).reset_index()
+    
+    # Format the date to show quarters
+    sentiment_counts['created_utc'] = sentiment_counts['created_utc'].dt.strftime('%b %Y')
+    
+    # Filter for the selected topic and years
+    filtered_sentiment_counts = sentiment_counts[
+        (sentiment_counts['Topic_Label'] == selected_topic_label) &
+        (sentiment_counts['created_utc'].str[-4:].astype(int) >= selected_years[0]) &
+        (sentiment_counts['created_utc'].str[-4:].astype(int) <= selected_years[1])
+    ].copy()
+    
+    # Get the actual Topic_Label for the selected topic (for title)
+    topic_label = filtered_sentiment_counts['Topic_Label'].iloc[0]
+    
+    # Define colors for each sentiment (using the original colors)
+    colors = {'negative': '#FF887E', 'neutral': '#FEE191', 'positive': '#B0DBA4'}
+
+    # Function to convert hex to rgba
+    def hex_to_rgba(hex_color, alpha=0.5):
+        rgb = hex_to_rgb(hex_color)
+        return f'rgba({rgb[0]}, {rgb[1]}, {rgb[2]}, {alpha})'
+    
+    def hex_to_rgb(hex_color):
+        hex_color = hex_color.lstrip('#')
+        return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+
+    # Initialize figure
     fig = go.Figure()
     
-    # Add traces for normalized frequencies for "Topic 8: Mental, Health, Adhd, Gp"
-    filtered_sentiment_counts = sentiment_data[sentiment_data['Topic_Label'] == "Topic 8: Mental, Health, Adhd, Gp"].copy()
-    
-    # Ensure the index is a DatetimeIndex before converting to period
-    if not isinstance(filtered_sentiment_counts.index, pd.DatetimeIndex):
-        filtered_sentiment_counts['created_utc'] = pd.to_datetime(filtered_sentiment_counts['created_utc'])
-        filtered_sentiment_counts.set_index('created_utc', inplace=True)
-    
-    # Create a 'Quarter' column from the 'created_utc' index
-    filtered_sentiment_counts['Quarter'] = filtered_sentiment_counts.index.to_period('Q').astype(str)
-    
-    # Group by 'Quarter' and 'sentiment' and count the occurrences
-    sentiment_counts = filtered_sentiment_counts.groupby(['Quarter', 'sentiment']).size().unstack(fill_value=0)
-    sentiment_counts = sentiment_counts.div(sentiment_counts.sum(axis=1), axis=0) * 100
-    
-    colors = {'negative': '#FF0000', 'neutral': '#FFFF00', 'positive': '#00FF00'}
-
-    for sentiment in ['positive', 'neutral', 'negative']:
-        if sentiment in sentiment_counts.columns:
-            fig.add_trace(go.Scatter(                
-                x=sentiment_counts.index,
-                y=sentiment_counts[sentiment],
-                mode='lines+markers',
-                name=sentiment,
-                marker=dict(color=colors[sentiment])
+    # Add traces for each sentiment in the order: negative, neutral, positive
+    for sentiment in ['negative', 'neutral', 'positive']:
+        if sentiment in filtered_sentiment_counts.columns:
+            fig.add_trace(go.Scatter(
+                x=filtered_sentiment_counts['created_utc'],
+                y=filtered_sentiment_counts[sentiment],
+                mode='lines',
+                name=sentiment.capitalize(),
+                stackgroup='one',
+                groupnorm='percent' if frequency_type == 'normalized' else None,
+                fillcolor=hex_to_rgba(colors[sentiment], 0.5),
+                line=dict(color=colors[sentiment], width=2),
+                hoverinfo='name+x+y',
+                hovertemplate='%{fullData.name}<br>Frequency: %{y:.0f}<br>Quarter: %{x}<extra></extra>',
             ))
     
-    # Additional layout and styling
+    # Set y-axis title based on frequency type
+    yaxis_title = "<b>Frequency</b>" if frequency_type == 'absolute' else "<b>Frequency (%)</b>"
+    
+    # Update layout
     fig.update_layout(
-        title=dict(
-            text="Tracking Sentiment over Time for Topic 8: Mental, Health, Adhd, Gp",
-            x=0.5,
-            font=dict(size=24)
+        height=500,
+        margin=dict(t=30, b=55, l=0, r=0),
+        xaxis=dict(
+            title="<b>Time (Quarters)</b>",
+            tickmode='array',
+            tickvals=filtered_sentiment_counts['created_utc'],
+            ticktext=filtered_sentiment_counts['created_utc'],
+            tickangle=45,
+            automargin=True
         ),
-        xaxis_title='<b>Time</b>',
-        yaxis_title='<b>Normalized Frequency</b>',
-        legend_title='<b>Sentiment</b>',
+        yaxis=dict(
+            title=yaxis_title
+        ),
+        legend=dict(
+            font=dict(size=10),
+            traceorder="normal",
+            itemwidth=30,
+            itemsizing="constant",
+        ),
         template="plotly_dark",
-        margin=dict(t=80, b=80, l=0, r=0)
+        hovermode="closest"
     )
     
     # Save the figure as an HTML file
     fig.write_html("fig/sentiment_analysis_example.html")
-    
+
     return fig
+
+
 
 def generate_topic_data_table(sentiment_data):
     """

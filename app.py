@@ -2,6 +2,8 @@
 import pandas as pd 
 import os
 import plotly.graph_objs as go
+from plotly.colors import hex_to_rgb
+from plotly.colors import DEFAULT_PLOTLY_COLORS
 import dash
 from dash import dcc, html, dash_table
 from dash.dependencies import Input, Output
@@ -58,8 +60,12 @@ sentiment_data = pd.read_csv(file_path)
 # Remove error data
 sentiment_data = sentiment_data[sentiment_data['Topic_Label'].notna()]
 
-#convert the 'created_utc' column to datetime format
-sentiment_data['created_utc'] = pd.to_datetime(sentiment_data['created_utc'])
+# Filter out rows with invalid date formats
+valid_date_mask = sentiment_data['created_utc'].str.match(r'^\d{1,2}/\d{1,2}/\d{4}$')
+sentiment_data = sentiment_data[valid_date_mask]
+
+# Convert the 'created_utc' column to datetime format
+sentiment_data['created_utc'] = pd.to_datetime(sentiment_data['created_utc'], format='%d/%m/%Y', errors='coerce')
 
 '''
 (1) Update Topic and Topic_Label for rows with Topic 99 to Topic 75 to prevent range break for range slider
@@ -68,6 +74,15 @@ sentiment_data['created_utc'] = pd.to_datetime(sentiment_data['created_utc'])
 
 Note: this step was interatively taken during the data sense-making
 '''
+
+# Ensure the 'Topic' column contains only numeric data
+sentiment_data['Topic'] = pd.to_numeric(sentiment_data['Topic'], errors='coerce')
+
+# Remove rows with NaN values in the 'Topic' column after conversion
+sentiment_data = sentiment_data.dropna(subset=['Topic'])
+
+# Convert 'Topic' column to integers
+sentiment_data['Topic'] = sentiment_data['Topic'].astype(int)
 
 # Update Topic 99 to 75
 sentiment_data.loc[sentiment_data['Topic'] == 99, 'Topic'] = 75
@@ -337,9 +352,11 @@ topic_frequency_page = html.Div([
     html.H1("Tracking Topic Frequencies over Time", className="title"),
     html.Hr(),
     html.P([
-    "(1) Select Range of Topics.", 
+    "1: Select Range of Topics. Click on topics in the legend to deselect them. The last topic (74) represents outliers.",
     html.Br(),
-    "(2) Select Type of Frequency: Absolute Counts or Normalized Percentages (% of frequency for the topic out of all selected topics)."
+    "2: Select Range of Years.",
+    html.Br(),
+    "3: Select Frequency Type: Absolute Post Count or Relative Post Count"
     ], className="instructions"),
     # Page Topic Slider
     dcc.RangeSlider(
@@ -350,13 +367,22 @@ topic_frequency_page = html.Div([
         marks={**{1: '1'}, **{i: str(i) for i in range(10, topic_max, 10)}, **{topic_max: str(topic_max)}},
         step=None
     ),
+    # Page Year Slider
+    dcc.RangeSlider(
+        id='topic-frequency-year-slider',
+        min=2018,
+        max=2023,
+        value=[2018, 2023],
+        marks={str(year): str(year) for year in range(2018, 2024)},
+        step=1
+    ),
     # Page Frequency Tabs
     dcc.Tabs(
         id='frequency-tabs',
         value='absolute',
         children=[
-            dcc.Tab(label='Absolute Counts', value='absolute'),
-            dcc.Tab(label='Normalized Percentages', value='normalized')
+            dcc.Tab(label='Absolute Post Count: Number of posts for each topic', value='absolute'),
+            dcc.Tab(label='Relative Post Count: % of posts for each topic across selected topics', value='normalized')
         ]
     ),
     # Page Visualisation
@@ -365,6 +391,7 @@ topic_frequency_page = html.Div([
         children=[dcc.Graph(id='topic-frequency-graph')]
     )
 ])
+
 
 
 
@@ -377,27 +404,48 @@ sentiment_analysis_page = html.Div([
     html.H1(id='sentiment-analysis-title', className="title"),
     html.Hr(),
     html.P([
-    "(1) Select Topic of Interest.", 
+    "1: Select Topic of Interest.", 
     html.Br(),
-    "(2) Select Type of Frequency: Absolute Counts or Normalized Percentages (% of frequency for the topic out of all selected topics)."
+    "2: Select Range of Years.",
+    html.Br(),
+    "3: Select Frequency Type: Sentiment Count or Relative Sentiment Count"
     ], className="instructions"),
     # Page Topic Dropdown List
     dcc.Dropdown(
         id='topic-dropdown',
         options=dropdown_options,
         value=topic_label_df['Topic_Label'].iloc[0],
+        style={'marginBottom': '20px'},
         className='Select',
         clearable=False
+    ),
+    # Page Year Slider
+    dcc.RangeSlider(
+        id='sentiment-analysis-year-slider',
+        min=2018,
+        max=2023,
+        value=[2018, 2023],
+        marks={str(year): str(year) for year in range(2018, 2024)},
+        step=1
     ),
     # Page Frequency Tabs
     dcc.Tabs(
         id='sentiment-frequency-tabs',
         value='absolute',
         children=[
-            dcc.Tab(label='Absolute Counts', value='absolute'),
-            dcc.Tab(label='Normalized Percentages', value='normalized')
+            dcc.Tab(label='Sentiment Counts: Number of posts for each sentiment', value='absolute'),
+            dcc.Tab(label='Relative Sentiment Counts: % of posts for each sentiment', value='normalized')
         ]
     ),
+    # Topic Table Legend
+    html.Div([
+        html.Div([
+            html.P("Sentiment:", className="topic-table-legend-title"),
+            html.Span("Positive", className="topic-table-legend positive"),
+            html.Span("Neutral", className="topic-table-legend neutral"),
+            html.Span("Negative", className="topic-table-legend negative")
+        ], className="topic-table-legend")
+    ]),
     # Page Visualisation
     html.Div(
         className='graph-container',
@@ -466,7 +514,7 @@ interpretation_page = html.Div([
     html.Hr(),
     # Sample from Topic Frequency Visualisation
     html.Div([
-        dcc.Graph(figure=generate_topic_frequency_html(sentiment_data, topic_max)),
+        dcc.Graph(figure=generate_topic_frequency_html(sentiment_data)),
         html.Hr(),
     # Explanation 1
         dcc.Markdown('''
@@ -584,8 +632,10 @@ def display_page(tab):
 @app.callback(
     Output('topic-frequency-graph', 'figure'),
     [Input('topic-range-slider', 'value'),
-     Input('frequency-tabs', 'value')]
+     Input('frequency-tabs', 'value'),
+     Input('topic-frequency-year-slider', 'value')]
 )
+
 
 
 
@@ -593,34 +643,34 @@ def display_page(tab):
 # Topic Frequency Visualisation
 #################
 
-def update_topic_frequency_graph(selected_range, frequency_type):
+def update_topic_frequency_graph(selected_range, frequency_type, selected_years):
     """
-    Update the topic frequency graph based on the selected topic range and frequency type.
+    Update the topic frequency graph based on the selected topic range, frequency type, and selected years.
+    Creates a stacked area chart with semi-transparent areas and visible lines, with the smallest topic at the bottom.
 
     Args:
         selected_range (list): A list containing the start and end values of the selected topic range.
         frequency_type (str): The type of frequency to display ('absolute' or 'normalized').
+        selected_years (list): A list containing the start and end years of the selected range.
 
     Returns:
         go.Figure: The updated topic frequency graph figure.
     """
 
-    # Filter data based on selected topic range
-    filtered_data = sentiment_data[sentiment_data['Topic'].isin(range(selected_range[0], selected_range[1] + 1))]
+    # Filter data based on selected topic range and years
+    filtered_data_years = sentiment_data[
+        (sentiment_data['Topic'].isin(range(selected_range[0], selected_range[1] + 1))) &
+        (sentiment_data['created_utc'].dt.year >= selected_years[0]) &
+        (sentiment_data['created_utc'].dt.year <= selected_years[1])
+    ]
 
-    # Ensure the index is a DatetimeIndex before converting to period
-    if not isinstance(filtered_data.index, pd.DatetimeIndex):
-        filtered_data['created_utc'] = pd.to_datetime(filtered_data['created_utc'])
-        filtered_data.set_index('created_utc', inplace=True)
-        
-    # Create a 'Quarter' column from the 'created_utc' index
-    filtered_data['Quarter'] = filtered_data.index.to_period('Q')
+    # Group by quarter and Topic_Label
+    topic_freq_over_time = filtered_data_years.groupby(
+        [pd.Grouper(key='created_utc', freq='Q'), 'Topic_Label']
+    ).size().unstack(fill_value=0).reset_index()
 
-    # Aggregate data by Quarter and Topic_Label
-    topic_freq_over_time = filtered_data.groupby(['Quarter', 'Topic_Label']).size().unstack(fill_value=0)
-
-    # Normalize frequencies by quarter and multiply by 100 for percentage
-    topic_freq_over_time_normalized = topic_freq_over_time.div(topic_freq_over_time.sum(axis=1), axis=0) * 100
+    # Format the date
+    topic_freq_over_time['created_utc'] = topic_freq_over_time['created_utc'].dt.strftime('%b %Y')
 
     # Function to extract topic number after removing "Topic " prefix
     def extract_topic_number(topic_label):
@@ -629,45 +679,67 @@ def update_topic_frequency_graph(selected_range, frequency_type):
         except (ValueError, IndexError):
             return float('inf')
 
-    # Sort the columns (topics) based on the extracted topic number
-    sorted_columns = sorted(topic_freq_over_time.columns, key=extract_topic_number)
-
-    # Reorder DataFrame columns according to the sorted topics
-    topic_freq_over_time = topic_freq_over_time[sorted_columns]
-    topic_freq_over_time_normalized = topic_freq_over_time_normalized[sorted_columns]
+    # Sort the columns (topics) based on the extracted topic number (ascending order)
+    sorted_columns = sorted(topic_freq_over_time.columns[1:], key=extract_topic_number)
 
     # Initialize figure
     fig = go.Figure()
     
-    # Add traces for absolute and normalized frequencies, with sorting applied to columns
-    for topic_label in sorted_columns:
+    def wrap_legend_label(label, max_width=20):
+        words = label.split()
+        lines = []
+        current_line = []
+        current_length = 0
+        for word in words:
+            if current_length + len(word) <= max_width:
+                current_line.append(word)
+                current_length += len(word) + 1
+            else:
+                lines.append(' '.join(current_line))
+                current_line = [word]
+                current_length = len(word)
+        lines.append(' '.join(current_line))
+        return '<br>'.join(lines)
+
+    for i, topic_label in enumerate(sorted_columns):
+        wrapped_label = wrap_legend_label(topic_label)
+        color = DEFAULT_PLOTLY_COLORS[i % len(DEFAULT_PLOTLY_COLORS)]
+        
         fig.add_trace(go.Scatter(
-            x=topic_freq_over_time.index.to_timestamp(),
+            x=topic_freq_over_time['created_utc'],
             y=topic_freq_over_time[topic_label],
-            mode='lines+markers',
-            name=topic_label,
-            hoverinfo='x+y',
-            hovertemplate=f"{topic_label}<br>Frequency: %{{y}}<br>Quarter: %{{x}}<extra></extra>",
-            visible=frequency_type == 'absolute'
+            mode='lines',
+            name=wrapped_label,
+            stackgroup='one',
+            groupnorm='percent' if frequency_type == 'normalized' else None,
+            line=dict(width=1, color=color),
+            fillcolor=color.replace('rgb', 'rgba').replace(')', ', 0.5)'),
+            hoverinfo='name+x+y',
+            hovertemplate='%{fullData.name}<br>Frequency: %{y:.0f}<br>Quarter: %{x}<extra></extra>',
         ))
 
-        fig.add_trace(go.Scatter(
-            x=topic_freq_over_time_normalized.index.to_timestamp(),
-            y=topic_freq_over_time_normalized[topic_label],
-            mode='lines+markers',
-            name=f"{topic_label} (Normalized)",
-            hoverinfo='x+y',
-            hovertemplate=f"{topic_label}<br>Frequency: %{{y:.1f}}%<br>Quarter: %{{x}}<extra></extra>",
-            visible=frequency_type == 'normalized'
-        ))
-    
-    # Additional inputs like axis legends
+    # Set y-axis title based on frequency type
+    yaxis_title = "<b>Frequency</b>" if frequency_type == 'absolute' else "<b>Frequency (%)</b>"
+
+    # Update layout
     fig.update_layout(
-        xaxis_title="<b>Time</b>",
-        yaxis_title="<b>Frequency</b>",
-        legend_title="<b>Topic Label</b>",
+        height=500,
+        margin=dict(t=10),
+        xaxis=dict(
+            title="<b>Time</b>",
+            automargin=True
+        ),
+        yaxis=dict(
+            title=yaxis_title
+        ),
+        legend=dict(
+            font=dict(size=10),
+            traceorder="normal",
+            itemwidth=30,
+            itemsizing="constant",
+        ),
         template="plotly_dark",
-        margin=dict(t=30, b=55, l=0, r=0),
+        hovermode="closest"
     )
 
     return fig
@@ -677,7 +749,8 @@ def update_topic_frequency_graph(selected_range, frequency_type):
     [Output('sentiment-analysis-title', 'children'),
      Output('sentiment-analysis-graph', 'figure')],
     [Input('topic-dropdown', 'value'),
-     Input('sentiment-frequency-tabs', 'value')]
+     Input('sentiment-frequency-tabs', 'value'),
+     Input('sentiment-analysis-year-slider', 'value')]
 )
 
 
@@ -686,19 +759,20 @@ def update_topic_frequency_graph(selected_range, frequency_type):
 # Sentiment Analysis Visualisation
 #################
 
-def update_sentiment_analysis_graph(selected_topic_label, frequency_type):
+def update_sentiment_analysis_graph(selected_topic_label, frequency_type, selected_years):
     """
-    Update the sentiment analysis graph based on the selected topic and frequency type.
+    Update the sentiment analysis graph based on the selected topic, frequency type, and selected years.
+    Creates a stacked area chart with semi-transparent areas and visible lines.
 
     Args:
         selected_topic_label (str): The selected topic label from the dropdown.
         frequency_type (str): The type of frequency to display ('absolute' or 'normalized').
+        selected_years (list): A list containing the start and end years of the selected range.
 
     Returns:
         tuple: A tuple containing the updated title and figure for the sentiment analysis graph.
     """
 
-    # Absolute Frequencies
     # Reset the index 'created_utc' 
     if sentiment_data.index.name == 'created_utc':
         sentiment_data.reset_index(inplace=True)
@@ -708,88 +782,74 @@ def update_sentiment_analysis_graph(selected_topic_label, frequency_type):
         [pd.Grouper(key='created_utc', freq='Q'), 'Topic_Label', 'sentiment']
     ).size().unstack(fill_value=0).reset_index()
     
-    # Extract topic numbers for filtering
-    sentiment_counts['Topic_Number'] = sentiment_counts['Topic_Label'].apply(
-        lambda x: int(x.split(':')[0].replace('Topic ', '').strip())
-    )
+    # Format the date to show quarters
+    sentiment_counts['created_utc'] = sentiment_counts['created_utc'].dt.strftime('%b %Y')
     
-    # Filter for the selected topic
+    # Filter for the selected topic and years
     filtered_sentiment_counts = sentiment_counts[
-        sentiment_counts['Topic_Label'] == selected_topic_label
+        (sentiment_counts['Topic_Label'] == selected_topic_label) &
+        (sentiment_counts['created_utc'].str[-4:].astype(int) >= selected_years[0]) &
+        (sentiment_counts['created_utc'].str[-4:].astype(int) <= selected_years[1])
     ].copy()
     
     # Get the actual Topic_Label for the selected topic (for title)
     topic_label = filtered_sentiment_counts['Topic_Label'].iloc[0]
     
-    # Define colors for each sentiment
-    colors = {'negative': '#FF0000', 'neutral': '#FFFF00', 'positive': '#00FF00'}
+    # Define colors for each sentiment (using the original colors)
+    colors = {'negative': '#FF887E', 'neutral': '#FEE191', 'positive': '#B0DBA4'}
 
-    # Plot for Absolute Frequencies
-    fig_abs = go.Figure()
-    
-    # Add traces for each sentiment for the selected topic
-    for sentiment in ['positive', 'neutral', 'negative']:
-        fig_abs.add_trace(
-            go.Scatter(
-                x=filtered_sentiment_counts['created_utc'],
-                y=filtered_sentiment_counts[sentiment],
-                mode='lines+markers',
-                name=sentiment,
-                legendgroup=topic_label,
-                line=dict(color=colors[sentiment]),
-                visible=frequency_type == 'absolute'
-            )
-        )
-    
-    # Normalized Frequencies
-    # Reset the DataFrame index 'created_utc' 
-    if 'created_utc' not in filtered_sentiment_counts.columns:
-        filtered_sentiment_counts.reset_index(inplace=True)
-    
-    # Check if 'total' column exists already, if not, calculate and merge it
-    if 'total' not in filtered_sentiment_counts.columns:
-        # Calculate the total sentiments by summing negative, neutral, and positive columns
-        filtered_sentiment_counts.loc[:, 'total'] = filtered_sentiment_counts[['negative', 'neutral', 'positive']].sum(axis=1)
-    
-    # Normalize sentiments
-    for sentiment in ['negative', 'neutral', 'positive']:
-        normalized_column_name = f'{sentiment}_normalized'
-        filtered_sentiment_counts.loc[:, normalized_column_name] = (filtered_sentiment_counts[sentiment] / filtered_sentiment_counts['total']) * 100
-    
-    fig_norm = go.Figure()
-    
-    # Add traces for each sentiment for the selected topic
-    for sentiment in ['positive', 'neutral', 'negative']:
-        normalized_column_name = f'{sentiment}_normalized'
-        fig_norm.add_trace(
-            go.Scatter(
-                x=filtered_sentiment_counts['created_utc'],
-                y=filtered_sentiment_counts[normalized_column_name],
-                mode='lines+markers',
-                name=f'{sentiment} (Normalized)',
-                legendgroup=topic_label,
-                line=dict(color=colors[sentiment]),
-                visible=frequency_type == 'normalized'
-            )
-        )
-    
-    # Initialize the final figure
+    # Function to convert hex to rgba
+    def hex_to_rgba(hex_color, alpha=0.5):
+        rgb = hex_to_rgb(hex_color)
+        return f'rgba({rgb[0]}, {rgb[1]}, {rgb[2]}, {alpha})'
+
+    # Initialize figure
     fig = go.Figure()
-
-    # Add traces from both absolute and normalized figures
-    fig.add_traces(fig_abs.data + fig_norm.data)
     
-    # Additional inputs like axis legends
+    # Add traces for each sentiment in the order: negative, neutral, positive
+    for sentiment in ['negative', 'neutral', 'positive']:
+        fig.add_trace(go.Scatter(
+            x=filtered_sentiment_counts['created_utc'],
+            y=filtered_sentiment_counts[sentiment],
+            mode='lines',
+            name=sentiment.capitalize(),
+            stackgroup='one',
+            groupnorm='percent' if frequency_type == 'normalized' else None,
+            fillcolor=hex_to_rgba(colors[sentiment], 0.5),
+            line=dict(color=colors[sentiment], width=2),
+            hoverinfo='name+x+y',
+            hovertemplate='%{fullData.name}<br>Frequency: %{y:.0f}<br>Quarter: %{x}<extra></extra>',
+        ))
+    
+    # Set y-axis title based on frequency type
+    yaxis_title = "<b>Frequency</b>" if frequency_type == 'absolute' else "<b>Frequency (%)</b>"
+    
+    # Update layout
     fig.update_layout(
-        xaxis_title='<b>Time</b>',
-        yaxis_title='<b>Frequency</b>',
-        legend_title='<b>Sentiment</b>',
-        legend=dict(y=0.5,font=dict(size=12)),
+        height=500,
+        margin=dict(t=30, b=55, l=0, r=0),
+        xaxis=dict(
+            title="<b>Time (Quarters)</b>",
+            tickmode='array',
+            tickvals=filtered_sentiment_counts['created_utc'],
+            ticktext=filtered_sentiment_counts['created_utc'],
+            tickangle=45,
+            automargin=True
+        ),
+        yaxis=dict(
+            title=yaxis_title
+        ),
+        legend=dict(
+            font=dict(size=10),
+            traceorder="normal",
+            itemwidth=30,
+            itemsizing="constant",
+        ),
         template="plotly_dark",
-        margin=dict(t=30, b=55, l=0, r=0)
+        hovermode="closest"
     )
     
-    # 1st output for Title, 2nd for Figure
+    # Return the title and figure
     return f"Tracking Sentiment over Time for {topic_label}", fig
 
 # Callback for topic table
